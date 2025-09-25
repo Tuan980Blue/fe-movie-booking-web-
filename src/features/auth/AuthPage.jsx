@@ -13,7 +13,6 @@ const AuthPage = () => {
   const handleLogin = async (userData) => {
     const result = await login(userData);
     if (result.success) {
-      alert(`Đăng nhập thành công!\nXin chào ${result.user.name}!`);
       navigate('/');
     } else {
       alert(`Đăng nhập thất bại: ${result.error}`);
@@ -23,7 +22,6 @@ const AuthPage = () => {
   const handleRegister = async (userData) => {
     const result = await register(userData);
     if (result.success) {
-      alert(`Đăng ký thành công!\nChào mừng ${result.user.name} đến với Cinema Booking System!`);
       navigate('/');
     } else {
       alert(`Đăng ký thất bại: ${result.error}`);
@@ -49,7 +47,7 @@ const AuthPage = () => {
             exit={{ opacity: 0, x: 50 }}
             transition={{ duration: 0.3 }}
           >
-            <LoginForm 
+            <LoginForm
               onLogin={handleLogin}
               onSwitchToRegister={switchToRegister}
             />
@@ -64,7 +62,7 @@ const AuthPage = () => {
             exit={{ opacity: 0, x: -50 }}
             transition={{ duration: 0.3 }}
           >
-            <RegisterForm 
+            <RegisterForm
               onRegister={handleRegister}
               onSwitchToLogin={switchToLogin}
             />

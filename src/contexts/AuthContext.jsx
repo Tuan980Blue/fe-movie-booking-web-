@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { loginApi, parseUserFromAccessToken, getMeApi, mapMeResponseToUser } from '../services/authService';
+import { loginApi, parseUserFromAccessToken, getMeApi, mapMeResponseToUser, registerApi } from '../services/authService';
 
 // Tạo Context để chia sẻ trạng thái/logic xác thực cho toàn bộ ứng dụng
 const AuthContext = createContext();
@@ -110,28 +110,48 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  const register = async (userData) => {
+  const register = async (formData) => {
     try {
-      // Giả lập API đăng ký: tạo user mới role 'user'
-      const mockUser = {
-        id: Math.random().toString(36).substr(2, 9),
-        name: userData.name,
-        email: userData.email,
-        role: 'user',
-        avatar: null,
-        createdAt: new Date().toISOString()
+      // Gọi API đăng ký: { email, password, fullName }
+      const res = await registerApi({
+        email: formData.email,
+        password: formData.password,
+        fullName: formData.fullName || formData.name,
+      });
+
+      const { accessToken, accessTokenExpiresAt, refreshToken, refreshTokenExpiresAt } = res;
+
+      const parsedUser = parseUserFromAccessToken(accessToken);
+      if (!parsedUser) throw new Error('Invalid access token');
+
+      const normalizedRole = (parsedUser.role || 'user').toString().toLowerCase();
+      const tempUser = {
+        id: parsedUser.id,
+        name: parsedUser.name || parsedUser.email?.split('@')[0] || '',
+        email: parsedUser.email,
+        role: normalizedRole,
       };
 
-      const mockToken = `mock_token_${Date.now()}`;
+      // Persist tokens
+      localStorage.setItem('access_token', accessToken);
+      if (accessTokenExpiresAt) localStorage.setItem('access_token_expires_at', accessTokenExpiresAt);
+      if (refreshToken) {
+        const seconds = refreshTokenExpiresAt
+          ? Math.max(60, Math.ceil((new Date(refreshTokenExpiresAt) - new Date()) / 1000))
+          : 14 * 24 * 60 * 60;
+        const secureFlag = window.location.protocol === 'https:' ? '; Secure' : '';
+        document.cookie = `refresh_token=${encodeURIComponent(refreshToken)}; Max-Age=${seconds}; Path=/; SameSite=Lax${secureFlag}`;
+      }
+      if (refreshTokenExpiresAt) localStorage.setItem('refresh_token_expires_at', refreshTokenExpiresAt);
+      localStorage.setItem('user_data', JSON.stringify(tempUser));
 
-      // Lưu phiên vào localStorage (demo)
-      localStorage.setItem('access_token', mockToken);
-      localStorage.setItem('user_data', JSON.stringify(mockUser));
+      setUser(tempUser);
+      setIsAdmin(normalizedRole === 'admin');
 
-      setUser(mockUser);
-      setIsAdmin(false);
+      // Đồng bộ hồ sơ đầy đủ
+      syncUserFromServer();
 
-      return { success: true, user: mockUser };
+      return { success: true, user: tempUser };
     } catch (error) {
       console.error('Register error:', error);
       return { success: false, error: error.message };
@@ -167,7 +187,8 @@ export const AuthProvider = ({ children }) => {
     login,
     register,
     logout,
-    updateProfile
+    updateProfile,
+    refreshUser: syncUserFromServer,
   };
 
   return (

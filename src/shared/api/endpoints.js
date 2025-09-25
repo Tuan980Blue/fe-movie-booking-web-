@@ -3,6 +3,7 @@ const endpoints = {
     login: '/auth/login',
     refresh: '/auth/refresh-token',
     me: '/users/me',
+    register: '/auth/register',
   },
   movies: {
     list: '/movies',
@@ -11,6 +12,11 @@ const endpoints = {
   bookings: {
     create: '/bookings',
     detail: (id) => `/bookings/${id}`,
+  },
+  users: {
+    me: '/users/me',
+    updateProfile: '/users/me',
+    changePassword: '/auth/change-password',
   },
 };
 

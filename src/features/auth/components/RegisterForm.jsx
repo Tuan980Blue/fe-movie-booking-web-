@@ -5,7 +5,7 @@ import PopcornAnimation from '../../../components/animations/EnhancedPopcornAnim
 
 const RegisterForm = ({ onRegister, onSwitchToLogin }) => {
   const [formData, setFormData] = useState({
-    name: '',
+    fullName: '',
     email: '',
     password: '',
     confirmPassword: '',
@@ -35,16 +35,15 @@ const RegisterForm = ({ onRegister, onSwitchToLogin }) => {
     }
 
     setIsLoading(true);
-
-    // Simulate API call
-    setTimeout(() => {
-      setIsLoading(false);
-      onRegister({
-        name: formData.name,
+    try {
+      await onRegister({
+        fullName: formData.fullName,
         email: formData.email,
-        id: Math.random().toString(36).substr(2, 9)
+        password: formData.password,
       });
-    }, 1500);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -121,15 +120,15 @@ const RegisterForm = ({ onRegister, onSwitchToLogin }) => {
 
                 {/* Left Column */}
                 <div className="space-y-4 pr-0 lg:pr-6">
-                  {/* Name Input */}
+                  {/* Full Name Input */}
                   <div>
                     <label className="block text-neutral-darkGray text-sm font-semibold mb-2">
                       👤 Họ và tên
                     </label>
                     <input
                       type="text"
-                      name="name"
-                      value={formData.name}
+                      name="fullName"
+                      value={formData.fullName}
                       onChange={handleInputChange}
                       required
                       className="w-full px-4 py-3 border-2 border-neutral-lightGray rounded-xl focus:border-primary-pink focus:outline-none transition-colors"
