@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { COLORS } from '../../../shared/constants/colors';
-import PopcornAnimation from '../../../components/EnhancedPopcornAnimation';
+import PopcornAnimation from '../../../components/animations/EnhancedPopcornAnimation';
 
 const RegisterForm = ({ onRegister, onSwitchToLogin }) => {
   const [formData, setFormData] = useState({
@@ -23,19 +23,19 @@ const RegisterForm = ({ onRegister, onSwitchToLogin }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     if (formData.password !== formData.confirmPassword) {
       alert('Mật khẩu xác nhận không khớp!');
       return;
     }
-    
+
     if (!formData.agreeTerms) {
       alert('Vui lòng đồng ý với điều khoản sử dụng!');
       return;
     }
 
     setIsLoading(true);
-    
+
     // Simulate API call
     setTimeout(() => {
       setIsLoading(false);
@@ -48,10 +48,10 @@ const RegisterForm = ({ onRegister, onSwitchToLogin }) => {
   };
 
   return (
-    <div 
+    <div
       className="min-h-screen flex items-center justify-center p-4 relative overflow-hidden"
-      style={{ 
-        background: `linear-gradient(135deg, ${COLORS.PRIMARY.PURPLE} 0%, ${COLORS.PRIMARY.PINK} 100%)` 
+      style={{
+        background: `linear-gradient(135deg, ${COLORS.PRIMARY.PURPLE} 0%, ${COLORS.PRIMARY.PINK} 100%)`
       }}
     >
       {/* Background Overlay */}
@@ -89,12 +89,12 @@ const RegisterForm = ({ onRegister, onSwitchToLogin }) => {
         <div className="bg-neutral-white rounded-2xl shadow-2xl overflow-hidden relative border-2 border-neutral-lightGray border-dashed">
           {/* Ticket Notch - Left */}
           <div className="absolute left-0 top-1/2 transform -translate-y-1/2 w-4 h-8 bg-primary-purple rounded-r-full -ml-2" />
-          
+
           {/* Ticket Notch - Right */}
           <div className="absolute right-0 top-1/2 transform -translate-y-1/2 w-4 h-8 bg-primary-purple rounded-l-full -mr-2" />
-          
+
           {/* Ticket Header */}
-          <div 
+          <div
             className="p-6 text-center relative"
             style={{ background: COLORS.GRADIENTS.PINK_ORANGE }}
           >
@@ -118,7 +118,7 @@ const RegisterForm = ({ onRegister, onSwitchToLogin }) => {
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6 relative">
                 {/* Vertical Divider Line */}
                 <div className="hidden lg:block absolute left-1/2 top-0 bottom-0 w-px bg-neutral-lightGray border-dashed border-l-2 border-neutral-lightGray transform -translate-x-1/2"></div>
-                
+
                 {/* Left Column */}
                 <div className="space-y-4 pr-0 lg:pr-6">
                   {/* Name Input */}
@@ -218,9 +218,9 @@ const RegisterForm = ({ onRegister, onSwitchToLogin }) => {
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
                 className="w-full py-3 rounded-xl font-bold text-neutral-white transition-all duration-300 relative overflow-hidden mb-6"
-                style={{ 
+                style={{
                   backgroundColor: COLORS.ACCENT.ORANGE,
-                  background: isLoading 
+                  background: isLoading
                     ? `linear-gradient(135deg, ${COLORS.ACCENT.ORANGE} 0%, ${COLORS.ACCENT.YELLOW} 100%)`
                     : COLORS.ACCENT.ORANGE
                 }}
@@ -277,7 +277,7 @@ const RegisterForm = ({ onRegister, onSwitchToLogin }) => {
                   ))}
                 </div>
               </div>
-              
+
               {/* Movie Icons */}
               <div className="flex flex-col items-center space-y-1">
                 <motion.div
