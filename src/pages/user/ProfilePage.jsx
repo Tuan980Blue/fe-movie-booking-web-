@@ -1,8 +1,10 @@
 import React from 'react';
 import { useAuth } from '../../contexts/AuthContext';
+import { useState } from 'react';
+import { updateProfileApi, changePasswordApi } from '../../services/userService';
 
 const ProfilePage = () => {
-  const { user, isAuthenticated, isLoading, isAdmin } = useAuth();
+  const { user, isAuthenticated, isLoading, isAdmin, refreshUser, updateProfile } = useAuth();
 
   const formatDate = (value) => {
     if (!value) return '-';
@@ -10,6 +12,53 @@ const ProfilePage = () => {
       return new Date(value).toLocaleString();
     } catch (_e) {
       return value;
+    }
+  };
+
+  const [isEditing, setIsEditing] = useState(false);
+  const [isChangingPassword, setIsChangingPassword] = useState(false);
+  const [editForm, setEditForm] = useState({ fullName: '', phone: '' });
+  const [pwdForm, setPwdForm] = useState({ currentPassword: '', newPassword: '', confirmPassword: '' });
+
+  const startEdit = () => {
+    setEditForm({ fullName: user?.name || '', phone: user?.phone || '' });
+    setIsEditing(true);
+  };
+  const cancelEdit = () => setIsEditing(false);
+  const onEditChange = (e) => setEditForm((p) => ({ ...p, [e.target.name]: e.target.value }));
+
+  const startChangePwd = () => setIsChangingPassword(true);
+  const cancelChangePwd = () => setIsChangingPassword(false);
+  const onPwdChange = (e) => setPwdForm((p) => ({ ...p, [e.target.name]: e.target.value }));
+
+  const handleSaveProfile = async (e) => {
+    e.preventDefault();
+    const payload = { fullName: editForm.fullName, phone: editForm.phone };
+    try {
+      await updateProfileApi(payload);
+      // Cập nhật UI tức thì (đồng bộ tên hiển thị)
+      updateProfile({ name: editForm.fullName, phone: editForm.phone });
+      // Gọi lại /users/me để đồng bộ đầy đủ (status/updatedAt/roles...)
+      await refreshUser();
+      setIsEditing(false);
+    } catch (err) {
+      alert('Cập nhật hồ sơ thất bại');
+    }
+  };
+
+  const handleChangePassword = async (e) => {
+    e.preventDefault();
+    if (pwdForm.newPassword !== pwdForm.confirmPassword) {
+      alert('Mật khẩu xác nhận không khớp');
+      return;
+    }
+    try {
+      await changePasswordApi({ currentPassword: pwdForm.currentPassword, newPassword: pwdForm.newPassword });
+      alert('Đổi mật khẩu thành công');
+      setIsChangingPassword(false);
+      setPwdForm({ currentPassword: '', newPassword: '', confirmPassword: '' });
+    } catch (err) {
+      alert('Đổi mật khẩu thất bại');
     }
   };
 
@@ -50,6 +99,51 @@ const ProfilePage = () => {
                   </span>
                 </div>
               </div>
+
+              <div className="flex items-center gap-3 mb-6">
+                <button onClick={startEdit} className="px-4 py-2 rounded-lg bg-primary-purple text-neutral-white hover:opacity-90">Cập nhật hồ sơ</button>
+                <button onClick={startChangePwd} className="px-4 py-2 rounded-lg bg-accent-orange text-neutral-white hover:opacity-90">Đổi mật khẩu</button>
+              </div>
+
+              {/* Edit Profile */}
+              {isEditing && (
+                <form onSubmit={handleSaveProfile} className="border rounded-xl p-5 mb-6 grid grid-cols-1 sm:grid-cols-2 gap-6">
+                  <div>
+                    <div className="text-neutral-lightGray text-sm mb-1">Họ và tên</div>
+                    <input name="fullName" value={editForm.fullName} onChange={onEditChange} className="w-full px-3 py-2 border rounded-lg" />
+                  </div>
+                  <div>
+                    <div className="text-neutral-lightGray text-sm mb-1">Điện thoại</div>
+                    <input name="phone" value={editForm.phone} onChange={onEditChange} className="w-full px-3 py-2 border rounded-lg" />
+                  </div>
+                  <div className="sm:col-span-2 flex gap-3">
+                    <button type="submit" className="px-4 py-2 rounded-lg bg-primary-purple text-neutral-white hover:opacity-90">Lưu</button>
+                    <button type="button" onClick={cancelEdit} className="px-4 py-2 rounded-lg bg-neutral-lightGray text-neutral-darkGray hover:opacity-90">Huỷ</button>
+                  </div>
+                </form>
+              )}
+
+              {/* Change Password */}
+              {isChangingPassword && (
+                <form onSubmit={handleChangePassword} className="border rounded-xl p-5 mb-6 grid grid-cols-1 sm:grid-cols-3 gap-6">
+                  <div>
+                    <div className="text-neutral-lightGray text-sm mb-1">Mật khẩu hiện tại</div>
+                    <input type="password" name="currentPassword" value={pwdForm.currentPassword} onChange={onPwdChange} className="w-full px-3 py-2 border rounded-lg" />
+                  </div>
+                  <div>
+                    <div className="text-neutral-lightGray text-sm mb-1">Mật khẩu mới</div>
+                    <input type="password" name="newPassword" value={pwdForm.newPassword} onChange={onPwdChange} className="w-full px-3 py-2 border rounded-lg" />
+                  </div>
+                  <div>
+                    <div className="text-neutral-lightGray text-sm mb-1">Xác nhận mật khẩu</div>
+                    <input type="password" name="confirmPassword" value={pwdForm.confirmPassword} onChange={onPwdChange} className="w-full px-3 py-2 border rounded-lg" />
+                  </div>
+                  <div className="sm:col-span-3 flex gap-3">
+                    <button type="submit" className="px-4 py-2 rounded-lg bg-accent-orange text-neutral-white hover:opacity-90">Đổi mật khẩu</button>
+                    <button type="button" onClick={cancelChangePwd} className="px-4 py-2 rounded-lg bg-neutral-lightGray text-neutral-darkGray hover:opacity-90">Huỷ</button>
+                  </div>
+                </form>
+              )}
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                 <div className="border rounded-xl p-5">

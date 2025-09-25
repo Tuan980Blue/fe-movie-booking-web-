@@ -18,6 +18,12 @@ export async function loginApi({ email, password }) {
   return data;
 }
 
+export async function registerApi({ email, password, fullName }) {
+  const url = endpoints.auth.register;
+  const { data } = await httpClient.post(url, { email, password, fullName });
+  return data;
+}
+
 export function parseUserFromAccessToken(accessToken) {
   const payload = decodeJwtPayload(accessToken);
   if (!payload) return null;
