@@ -1,19 +1,33 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../../contexts/AuthContext';
 import LoginForm from './components/LoginForm';
 import RegisterForm from './components/RegisterForm';
 
 const AuthPage = () => {
   const [currentView, setCurrentView] = useState('login'); // 'login', 'register'
+  const { login, register } = useAuth();
+  const navigate = useNavigate();
 
-  const handleLogin = (userData) => {
-    // Simple login - just show success message
-    alert(`Đăng nhập thành công!\nXin chào ${userData.name}!`);
+  const handleLogin = async (userData) => {
+    const result = await login(userData);
+    if (result.success) {
+      alert(`Đăng nhập thành công!\nXin chào ${result.user.name}!`);
+      navigate('/');
+    } else {
+      alert(`Đăng nhập thất bại: ${result.error}`);
+    }
   };
 
-  const handleRegister = (userData) => {
-    // Simple register - just show success message
-    alert(`Đăng ký thành công!\nChào mừng ${userData.name} đến với Cinema Booking System!`);
+  const handleRegister = async (userData) => {
+    const result = await register(userData);
+    if (result.success) {
+      alert(`Đăng ký thành công!\nChào mừng ${result.user.name} đến với Cinema Booking System!`);
+      navigate('/');
+    } else {
+      alert(`Đăng ký thất bại: ${result.error}`);
+    }
   };
 
   const switchToRegister = () => {
