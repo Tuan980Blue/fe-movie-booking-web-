@@ -31,10 +31,10 @@ import PaymentPage from '../pages/PaymentPage';
 // Admin Pages
 import AdminDashboard from '../pages/admin/Dashboard';
 
-// Protected Route Component
+// Protected Route Component: Chặn truy cập nếu chưa đăng nhập
 const ProtectedRoute = ({ children }) => {
   const { isAuthenticated, isLoading } = useAuth();
-  
+
   if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -42,14 +42,14 @@ const ProtectedRoute = ({ children }) => {
       </div>
     );
   }
-  
+
   return isAuthenticated ? children : <Navigate to="/auth" replace />;
 };
 
-// Admin Route Component
+// Admin Route Component: Chỉ cho phép admin (đã đăng nhập + isAdmin === true)
 const AdminRoute = ({ children }) => {
   const { isAuthenticated, isAdmin, isLoading } = useAuth();
-  
+
   if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -57,15 +57,15 @@ const AdminRoute = ({ children }) => {
       </div>
     );
   }
-  
+
   if (!isAuthenticated) {
     return <Navigate to="/auth" replace />;
   }
-  
+
   if (!isAdmin) {
     return <Navigate to="/" replace />;
   }
-  
+
   return children;
 };
 
@@ -83,24 +83,24 @@ const AppRouter = () => {
         <Route path="reviews" element={<ReviewsPage />} />
         <Route path="about" element={<AboutPage />} />
         <Route path="services" element={<ServicesPage />} />
+
+        {/* Auth Routes */}
+        <Route path="/auth" element={<AuthPage />} />
+
+        {/* Protected Routes - UserLayout: chỉ truy cập được khi đã đăng nhập */}
+        <Route path="/user" element={
+          <ProtectedRoute>
+            <UserLayout />
+          </ProtectedRoute>
+        }>
+          <Route path="profile" element={<ProfilePage />} />
+          <Route path="my-bookings" element={<MyBookingsPage />} />
+          <Route path="booking/:movieId" element={<BookingPage />} />
+          <Route path="payment" element={<PaymentPage />} />
+        </Route>
       </Route>
 
-      {/* Auth Routes */}
-      <Route path="/auth" element={<AuthPage />} />
-      
-      {/* Protected Routes - UserLayout */}
-      <Route path="/user" element={
-        <ProtectedRoute>
-          <UserLayout />
-        </ProtectedRoute>
-      }>
-        <Route path="profile" element={<ProfilePage />} />
-        <Route path="my-bookings" element={<MyBookingsPage />} />
-        <Route path="booking/:movieId" element={<BookingPage />} />
-        <Route path="payment" element={<PaymentPage />} />
-      </Route>
-
-      {/* Admin Routes */}
+      {/* Admin Routes: chỉ admin có thể truy cập */}
       <Route path="/admin" element={
         <AdminRoute>
           <AdminLayout />
@@ -110,7 +110,7 @@ const AppRouter = () => {
         <Route path="dashboard" element={<AdminDashboard />} />
       </Route>
 
-      {/* Catch all route */}
+      {/* Catch all route: URL không khớp -> quay về trang chủ */}
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );

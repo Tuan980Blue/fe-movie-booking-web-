@@ -23,16 +23,15 @@ const LoginForm = ({ onLogin, onSwitchToRegister }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
-
-    // Simulate API call
-    setTimeout(() => {
-      setIsLoading(false);
-      onLogin({
+    try {
+      await onLogin({
         email: formData.email,
-        name: formData.email.split('@')[0], // Mock user name
-        id: Math.random().toString(36).substr(2, 9)
+        password: formData.password,
+        rememberMe: formData.rememberMe,
       });
-    }, 1500);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (

@@ -1,7 +1,10 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import { loginApi, parseUserFromAccessToken, getMeApi, mapMeResponseToUser } from '../services/authService';
 
+// Tạo Context để chia sẻ trạng thái/logic xác thực cho toàn bộ ứng dụng
 const AuthContext = createContext();
 
+// Hook tiện ích: lấy value từ AuthContext, đảm bảo chỉ dùng bên trong AuthProvider
 export const useAuth = () => {
   const context = useContext(AuthContext);
   if (!context) {
@@ -15,7 +18,7 @@ export const AuthProvider = ({ children }) => {
   const [isLoading, setIsLoading] = useState(true);
   const [isAdmin, setIsAdmin] = useState(false);
 
-  // Check for existing session on app load
+  // Khi app tải: cố gắng khôi phục phiên từ localStorage (mock cho demo)
   useEffect(() => {
     const checkAuthStatus = () => {
       try {
@@ -25,7 +28,10 @@ export const AuthProvider = ({ children }) => {
         if (token && userData) {
           const parsedUser = JSON.parse(userData);
           setUser(parsedUser);
+          // Đặt cờ admin dựa trên role của user (lưu ý: client-side chỉ mang tính UX)
           setIsAdmin(parsedUser.role === 'admin');
+          // Đồng bộ hồ sơ mới nhất từ server trong nền
+          syncUserFromServer();
         }
       } catch (error) {
         console.error('Error checking auth status:', error);
@@ -40,28 +46,64 @@ export const AuthProvider = ({ children }) => {
     checkAuthStatus();
   }, []);
 
+  const syncUserFromServer = async () => {
+    try {
+      const me = await getMeApi();
+      const mapped = mapMeResponseToUser(me);
+      if (mapped) {
+        const normalizedRole = (mapped.role || 'user').toString().toLowerCase();
+        const finalUser = { ...mapped, role: normalizedRole };
+        localStorage.setItem('user_data', JSON.stringify(finalUser));
+        setUser(finalUser);
+        setIsAdmin(normalizedRole === 'admin');
+      }
+    } catch (_e) {
+      // Nếu lỗi (401/403) giữ nguyên state hiện tại; interceptor sẽ xử lý token
+    }
+  };
+
   const login = async (userData) => {
     try {
-      // Simulate API call
-      const mockUser = {
-        id: userData.id || Math.random().toString(36).substr(2, 9),
-        name: userData.name || userData.email.split('@')[0],
-        email: userData.email,
-        role: userData.role || 'user',
-        avatar: userData.avatar || null,
-        createdAt: new Date().toISOString()
+      // Gọi API đăng nhập thật
+      const res = await loginApi({ email: userData.email, password: userData.password });
+      const { accessToken, accessTokenExpiresAt, refreshToken, refreshTokenExpiresAt } = res;
+
+      // Giải mã token để lấy thông tin user và role
+      const parsedUser = parseUserFromAccessToken(accessToken);
+      if (!parsedUser) {
+        throw new Error('Invalid access token');
+      }
+
+      // Chuẩn hoá role về chữ thường để so sánh an toàn
+      const normalizedRole = (parsedUser.role || 'user').toString().toLowerCase();
+      const finalUser = {
+        id: parsedUser.id,
+        name: parsedUser.name || parsedUser.email?.split('@')[0] || '',
+        email: parsedUser.email,
+        role: normalizedRole,
       };
 
-      const mockToken = `mock_token_${Date.now()}`;
+      // Lưu token và user vào localStorage để khôi phục phiên
+      localStorage.setItem('access_token', accessToken);
+      if (accessTokenExpiresAt) localStorage.setItem('access_token_expires_at', accessTokenExpiresAt);
+      // Lưu refresh token: đặt cookie để interceptor có thể đọc, và lưu hạn vào localStorage
+      if (refreshToken) {
+        const seconds = refreshTokenExpiresAt
+          ? Math.max(60, Math.ceil((new Date(refreshTokenExpiresAt) - new Date()) / 1000))
+          : 14 * 24 * 60 * 60; // mặc định 14 ngày
+        const secureFlag = window.location.protocol === 'https:' ? '; Secure' : '';
+        document.cookie = `refresh_token=${encodeURIComponent(refreshToken)}; Max-Age=${seconds}; Path=/; SameSite=Lax${secureFlag}`;
+      }
+      if (refreshTokenExpiresAt) localStorage.setItem('refresh_token_expires_at', refreshTokenExpiresAt);
+      localStorage.setItem('user_data', JSON.stringify(finalUser));
 
-      // Store in localStorage
-      localStorage.setItem('access_token', mockToken);
-      localStorage.setItem('user_data', JSON.stringify(mockUser));
+      setUser(finalUser);
+      setIsAdmin(normalizedRole === 'admin');
 
-      setUser(mockUser);
-      setIsAdmin(mockUser.role === 'admin');
+      // Đồng bộ hồ sơ đầy đủ từ server (không chặn luồng login)
+      syncUserFromServer();
 
-      return { success: true, user: mockUser };
+      return { success: true, user: finalUser };
     } catch (error) {
       console.error('Login error:', error);
       return { success: false, error: error.message };
@@ -70,7 +112,7 @@ export const AuthProvider = ({ children }) => {
 
   const register = async (userData) => {
     try {
-      // Simulate API call
+      // Giả lập API đăng ký: tạo user mới role 'user'
       const mockUser = {
         id: Math.random().toString(36).substr(2, 9),
         name: userData.name,
@@ -82,7 +124,7 @@ export const AuthProvider = ({ children }) => {
 
       const mockToken = `mock_token_${Date.now()}`;
 
-      // Store in localStorage
+      // Lưu phiên vào localStorage (demo)
       localStorage.setItem('access_token', mockToken);
       localStorage.setItem('user_data', JSON.stringify(mockUser));
 
@@ -97,13 +139,19 @@ export const AuthProvider = ({ children }) => {
   };
 
   const logout = () => {
+    // Xoá dữ liệu phiên khỏi localStorage và reset state
     localStorage.removeItem('access_token');
+    localStorage.removeItem('access_token_expires_at');
     localStorage.removeItem('user_data');
+    localStorage.removeItem('refresh_token_expires_at');
+    // Xoá cookie refresh token
+    document.cookie = 'refresh_token=; Max-Age=-1; path=/';
     setUser(null);
     setIsAdmin(false);
   };
 
   const updateProfile = (updatedData) => {
+    // Cập nhật hồ sơ trong state và đồng bộ lại localStorage
     if (user) {
       const updatedUser = { ...user, ...updatedData };
       localStorage.setItem('user_data', JSON.stringify(updatedUser));
