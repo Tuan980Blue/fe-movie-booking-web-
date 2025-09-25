@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { COLORS } from '../../../shared/constants/colors';
-import PopcornAnimation from '@/components/animations/EnhancedPopcornAnimation';
+import PopcornAnimation from '../../../components/animations/EnhancedPopcornAnimation';
 
 const RegisterForm = ({ onRegister, onSwitchToLogin }) => {
   const [formData, setFormData] = useState({
