@@ -1,23 +1,31 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { useAuth } from '../../contexts/AuthContext';
 import {COLORS} from "../../shared/constants/colors";
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [activeTab, setActiveTab] = useState('home');
+  const { user, isAuthenticated, logout } = useAuth();
+  const navigate = useNavigate();
 
   const menuItems = [
-    { id: 'home', label: 'TRANG CHỦ', icon: '🏠' },
-    { id: 'movies', label: 'PHIM', icon: '🎬' },
-    { id: 'showtimes', label: 'LỊCH CHIẾU', icon: '📅' },
-    { id: 'prices', label: 'GIÁ VÉ', icon: '💰' },
-    { id: 'members', label: 'THÀNH VIÊN', icon: '👥' },
-    { id: 'promotions', label: 'ƯU ĐÃI - SỰ KIỆN', icon: '🎉' },
-    { id: 'reviews', label: 'ĐÁNH GIÁ PHIM', icon: '⭐' },
-    { id: 'about', label: 'GIỚI THIỆU', icon: 'ℹ️' },
-    { id: 'services', label: 'DỊCH VỤ', icon: '🛠️' }
+    { id: 'home', label: 'TRANG CHỦ', icon: '🏠', path: '/' },
+    { id: 'movies', label: 'PHIM', icon: '🎬', path: '/movies' },
+    { id: 'showtimes', label: 'LỊCH CHIẾU', icon: '📅', path: '/showtimes' },
+    { id: 'prices', label: 'GIÁ VÉ', icon: '💰', path: '/prices' },
+    { id: 'members', label: 'THÀNH VIÊN', icon: '👥', path: '/user/profile' },
+    { id: 'promotions', label: 'ƯU ĐÃI - SỰ KIỆN', icon: '🎉', path: '/promotions' },
+    { id: 'reviews', label: 'ĐÁNH GIÁ PHIM', icon: '⭐', path: '/reviews' },
+    { id: 'about', label: 'GIỚI THIỆU', icon: 'ℹ️', path: '/about' },
+    { id: 'services', label: 'DỊCH VỤ', icon: '🛠️', path: '/services' }
   ];
+
+  const handleLogout = () => {
+    logout();
+    navigate('/');
+  };
 
   return (
     <nav className="relative overflow-hidden shadow-lg">
@@ -35,21 +43,24 @@ const Navbar = () => {
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           {/* Left Side - Logo */}
           <div className="flex items-center space-x-4">
-            <motion.div
-              className="flex items-center space-x-3"
-              whileHover={{ scale: 1.05 }}
-            >
-              <div
-                className="w-12 h-12 rounded-full flex items-center justify-center shadow-lg"
-                style={{ background: `linear-gradient(135deg, ${COLORS.ACCENT.ORANGE} 0%, ${COLORS.PRIMARY.PINK} 100%)` }}
+            <Link to="/">
+              <motion.div
+                className="flex items-center space-x-3"
+                whileHover={{ scale: 1.05 }}
               >
-                <span className="text-neutral-white text-xl">▶️</span>
-              </div>
-              <div>
-                <div className="text-primary-pink font-bold text-lg">TA MEM</div>
-                <div className="text-primary-purple font-semibold text-sm -mt-1">CINEMA</div>
-              </div>
-            </motion.div>
+                <div className="w-12 h-12 rounded-full overflow-hidden shadow-lg">
+                  <img 
+                    src="/logo.png" 
+                    alt="TA MEM CINEMA Logo" 
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+                <div>
+                  <div className="text-primary-pink font-bold text-lg">TA MEM</div>
+                  <div className="text-primary-purple font-semibold text-sm -mt-1">CINEMA</div>
+                </div>
+              </motion.div>
+            </Link>
 
             {/* Book Tickets Banner */}
             <motion.div
@@ -92,29 +103,74 @@ const Navbar = () => {
 
           {/* Right Side - User Actions */}
           <div className="flex items-center space-x-3">
-            {/* Register Button */}
-            <Link to="/auth">
-              <motion.button
-                className="hidden sm:flex items-center space-x-2 bg-neutral-lightGray bg-opacity-20 border border-neutral-white px-4 py-2 rounded-full text-neutral-white hover:bg-neutral-white hover:text-primary-purple transition-all"
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-              >
-                <span className="text-lg">🍿</span>
-                <span className="font-semibold text-sm">ĐĂNG KÍ THÀNH VIÊN</span>
-              </motion.button>
-            </Link>
+            {isAuthenticated ? (
+              <>
+                {/* User Profile */}
+                <div className="hidden sm:flex items-center space-x-2 text-neutral-white">
+                  <span className="text-lg">👤</span>
+                  <span className="font-semibold text-sm">{user?.name}</span>
+                </div>
+                
+                {/* User Menu */}
+                <div className="hidden sm:flex items-center space-x-2">
+                  <Link to="/user/profile">
+                    <motion.button
+                      className="px-3 py-2 bg-neutral-lightGray bg-opacity-20 border border-neutral-white rounded-full text-neutral-white hover:bg-neutral-white hover:text-primary-purple transition-all text-sm"
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                    >
+                      Profile
+                    </motion.button>
+                  </Link>
+                  <Link to="/user/my-bookings">
+                    <motion.button
+                      className="px-3 py-2 bg-neutral-lightGray bg-opacity-20 border border-neutral-white rounded-full text-neutral-white hover:bg-neutral-white hover:text-primary-purple transition-all text-sm"
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                    >
+                      Vé của tôi
+                    </motion.button>
+                  </Link>
+                </div>
 
-            {/* Login Button */}
-            <Link to="/auth">
-              <motion.button
-                className="flex items-center space-x-2 bg-primary-pink px-4 py-2 rounded-full text-neutral-white hover:bg-cinema-neonPink transition-all shadow-lg"
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-              >
-                <span className="text-lg">🥤</span>
-                <span className="font-bold text-sm">ĐĂNG NHẬP</span>
-              </motion.button>
-            </Link>
+                {/* Logout Button */}
+                <motion.button
+                  onClick={handleLogout}
+                  className="flex items-center space-x-2 bg-accent-red px-4 py-2 rounded-full text-neutral-white hover:bg-red-600 transition-all shadow-lg"
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  <span className="text-lg">🚪</span>
+                  <span className="font-bold text-sm">ĐĂNG XUẤT</span>
+                </motion.button>
+              </>
+            ) : (
+              <>
+                {/* Register Button */}
+                <Link to="/auth">
+                  <motion.button
+                    className="hidden sm:flex items-center space-x-2 bg-neutral-lightGray bg-opacity-20 border border-neutral-white px-4 py-2 rounded-full text-neutral-white hover:bg-neutral-white hover:text-primary-purple transition-all"
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                  >
+                    <span className="text-lg">🍿</span>
+                    <span className="font-semibold text-sm">ĐĂNG KÍ THÀNH VIÊN</span>
+                  </motion.button>
+                </Link>
+
+                {/* Login Button */}
+                <Link to="/auth">
+                  <motion.button
+                    className="flex items-center space-x-2 bg-primary-pink px-4 py-2 rounded-full text-neutral-white hover:bg-cinema-neonPink transition-all shadow-lg"
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                  >
+                    <span className="text-lg">🥤</span>
+                    <span className="font-bold text-sm">ĐĂNG NHẬP</span>
+                  </motion.button>
+                </Link>
+              </>
+            )}
 
             {/* Notifications */}
             <motion.button
@@ -150,33 +206,34 @@ const Navbar = () => {
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-1">
             {menuItems.map((item) => (
-              <motion.button
-                key={item.id}
-                onClick={() => setActiveTab(item.id)}
-                className={`relative px-4 py-2 rounded-t-lg font-semibold text-sm transition-all ${
-                  activeTab === item.id
-                    ? 'bg-primary-pink text-neutral-white'
-                    : 'text-neutral-white hover:text-accent-yellow hover:bg-neutral-white hover:bg-opacity-10'
-                }`}
-                whileHover={{ y: -2 }}
-                whileTap={{ scale: 0.98 }}
-              >
-                <span className="mr-2">{item.icon}</span>
-                {item.label}
+              <Link key={item.id} to={item.path}>
+                <motion.button
+                  onClick={() => setActiveTab(item.id)}
+                  className={`relative px-4 py-2 rounded-t-lg font-semibold text-sm transition-all ${
+                    activeTab === item.id
+                      ? 'bg-primary-pink text-neutral-white'
+                      : 'text-neutral-white hover:text-accent-yellow hover:bg-neutral-white hover:bg-opacity-10'
+                  }`}
+                  whileHover={{ y: -2 }}
+                  whileTap={{ scale: 0.98 }}
+                >
+                  <span className="mr-2">{item.icon}</span>
+                  {item.label}
 
-                {/* Active Tab Indicator */}
-                {activeTab === item.id && (
-                  <motion.div
-                    className="absolute -bottom-2 left-0 right-0 h-2 bg-primary-pink"
-                    initial={{ scaleX: 0 }}
-                    animate={{ scaleX: 1 }}
-                    transition={{ duration: 0.3 }}
-                    style={{
-                      clipPath: 'polygon(0 0, calc(100% - 8px) 0, 100% 100%, 8px 100%)'
-                    }}
-                  />
-                )}
-              </motion.button>
+                  {/* Active Tab Indicator */}
+                  {activeTab === item.id && (
+                    <motion.div
+                      className="absolute -bottom-2 left-0 right-0 h-2 bg-primary-pink"
+                      initial={{ scaleX: 0 }}
+                      animate={{ scaleX: 1 }}
+                      transition={{ duration: 0.3 }}
+                      style={{
+                        clipPath: 'polygon(0 0, calc(100% - 8px) 0, 100% 100%, 8px 100%)'
+                      }}
+                    />
+                  )}
+                </motion.button>
+              </Link>
             ))}
           </div>
 
@@ -189,22 +246,23 @@ const Navbar = () => {
           >
             <div className="py-4 space-y-2">
               {menuItems.map((item) => (
-                <motion.button
-                  key={item.id}
-                  onClick={() => {
-                    setActiveTab(item.id);
-                    setIsMenuOpen(false);
-                  }}
-                  className={`w-full flex items-center space-x-3 px-4 py-3 rounded-lg font-semibold text-sm transition-all ${
-                    activeTab === item.id
-                      ? 'bg-primary-pink text-neutral-white'
-                      : 'text-neutral-white hover:text-accent-yellow hover:bg-neutral-white hover:bg-opacity-10'
-                  }`}
-                  whileHover={{ x: 4 }}
-                >
-                  <span className="text-lg">{item.icon}</span>
-                  <span>{item.label}</span>
-                </motion.button>
+                <Link key={item.id} to={item.path}>
+                  <motion.button
+                    onClick={() => {
+                      setActiveTab(item.id);
+                      setIsMenuOpen(false);
+                    }}
+                    className={`w-full flex items-center space-x-3 px-4 py-3 rounded-lg font-semibold text-sm transition-all ${
+                      activeTab === item.id
+                        ? 'bg-primary-pink text-neutral-white'
+                        : 'text-neutral-white hover:text-accent-yellow hover:bg-neutral-white hover:bg-opacity-10'
+                    }`}
+                    whileHover={{ x: 4 }}
+                  >
+                    <span className="text-lg">{item.icon}</span>
+                    <span>{item.label}</span>
+                  </motion.button>
+                </Link>
               ))}
             </div>
           </motion.div>
