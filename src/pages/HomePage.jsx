@@ -1,10 +1,7 @@
 import React from 'react';
 import {
   HeroSection,
-  FeaturedMoviesSection,
-  ComingSoonSection,
   TodayShowtimesSection,
-  QuickInfoSection,
   MoviesShowcase
 } from '../components/home';
 
@@ -14,7 +11,6 @@ const HomePage = () => {
       <HeroSection />
       <MoviesShowcase />
       <TodayShowtimesSection />
-      <QuickInfoSection />
     </div>
   );
 };
