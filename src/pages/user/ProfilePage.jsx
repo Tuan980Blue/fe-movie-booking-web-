@@ -66,11 +66,11 @@ const ProfilePage = () => {
     <div className="min-h-screen py-16 px-4 lg:px-8">
       <div className="max-w-4xl mx-auto">
         <div className="text-center mb-12">
-          <h1 className="text-4xl font-bold text-neutral-white mb-4">👤 Thông tin cá nhân</h1>
-          <p className="text-neutral-white opacity-75 text-lg">Quản lý thông tin tài khoản</p>
+          <h1 className="text-4xl font-bold text-neutral-700 mb-4">👤 Thông tin cá nhân</h1>
+          <p className="text-neutral-700 opacity-75 text-lg">Quản lý thông tin tài khoản</p>
         </div>
 
-        <div className="bg-neutral-white rounded-2xl p-8">
+        <div className="rounded-2xl p-8">
           {isLoading ? (
             <div className="min-h-[120px] flex items-center justify-center">
               <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-primary-pink"></div>

@@ -4,15 +4,15 @@ import {
   FeaturedMoviesSection,
   ComingSoonSection,
   TodayShowtimesSection,
-  QuickInfoSection
+  QuickInfoSection,
+  MoviesShowcase
 } from '../components/home';
 
 const HomePage = () => {
   return (
     <div className="min-h-screen">
       <HeroSection />
-      <FeaturedMoviesSection />
-      <ComingSoonSection />
+      <MoviesShowcase />
       <TodayShowtimesSection />
       <QuickInfoSection />
     </div>

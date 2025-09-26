@@ -4,6 +4,11 @@ const endpoints = {
     refresh: '/auth/refresh-token',
     register: '/auth/register',
   },
+  users: {
+    me: '/users/me',
+    updateProfile: '/users/me',
+    changePassword: '/auth/change-password',
+  },
   movies: {
     list: '/movies',
     detail: (id) => `/movies/${id}`,
@@ -11,11 +16,6 @@ const endpoints = {
   bookings: {
     create: '/bookings',
     detail: (id) => `/bookings/${id}`,
-  },
-  users: {
-    me: '/users/me',
-    updateProfile: '/users/me',
-    changePassword: '/auth/change-password',
   },
 };
 
