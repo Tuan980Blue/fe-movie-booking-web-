@@ -41,7 +41,7 @@ export function parseUserFromAccessToken(accessToken) {
 }
 
 export async function getMeApi() {
-  const url = endpoints.auth.me;
+  const url = endpoints.users.me;
   const { data } = await httpClient.get(url);
   return data;
 }

@@ -9,6 +9,7 @@ const App = () => {
     // Bật định tuyến kiểu HTML5 History cho URL đẹp và chuyển trang mượt
     <BrowserRouter>
       {/* AuthProvider cung cấp context: user, isAuthenticated, isAdmin, isLoading và các hàm auth */}
+      {/*Nếu component gọi useAuth() nhưng không được bao bọc bởi AuthProvider, context sẽ là undefined.*/}
       <AuthProvider>
         {/* Lớp nền toàn app với gradient; mọi route được render bởi AppRouter bên dưới */}
         <div className="min-h-screen bg-gradient-to-br from-primary-purple to-primary-pink">
