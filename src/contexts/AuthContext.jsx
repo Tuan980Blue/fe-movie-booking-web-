@@ -2,9 +2,11 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 import { loginApi, parseUserFromAccessToken, getMeApi, mapMeResponseToUser, registerApi } from '../services/authService';
 
 // Tạo Context để chia sẻ trạng thái/logic xác thực cho toàn bộ ứng dụng
+// Context này đóng vai trò là “kênh” để truyền dữ liệu (ví dụ: thông tin người dùng đã đăng nhập, token,
+// hàm đăng nhập/đăng xuất) xuống các component con mà không phải truyền props thủ công qua nhiều cấp.
 const AuthContext = createContext();
 
-// Hook tiện ích: lấy value từ AuthContext, đảm bảo chỉ dùng bên trong AuthProvider
+// Hook tiện ích: lấy value từ AuthContext, đảm bảo chỉ dùng bên trong AuthProvider(bọc AuthProvider ở App.js)
 export const useAuth = () => {
   const context = useContext(AuthContext);
   if (!context) {
@@ -24,7 +26,7 @@ export const AuthProvider = ({ children }) => {
       try {
         const token = localStorage.getItem('access_token');
         const userData = localStorage.getItem('user_data');
-        
+
         if (token && userData) {
           const parsedUser = JSON.parse(userData);
           setUser(parsedUser);

@@ -2,7 +2,6 @@ const endpoints = {
   auth: {
     login: '/auth/login',
     refresh: '/auth/refresh-token',
-    me: '/users/me',
     register: '/auth/register',
   },
   movies: {
