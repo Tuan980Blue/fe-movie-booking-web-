@@ -8,24 +8,24 @@ const HeroSection = () => {
   const movieSlices = [
     {
       id: 1,
-      title: "Avatar: The Way of Water",
+      title: "Avengers: Endgamer",
       image: "https://image.tmdb.org/t/p/original/7RyHsO4yDXtBv1zUU3mTpHeQ0d5.jpg",
-      genre: "Sci-Fi, Action",
-      year: "2024"
+      genre: "Kinh Dị, Hành Động",
+      year: "2025"
     },
     {
       id: 2,
-      title: "Black Panther: Wakanda Forever",
-      image: "https://image.tmdb.org/t/p/original/7RyHsO4yDXtBv1zUU3mTpHeQ0d5.jpg",
-      genre: "Action, Adventure",
-      year: "2024"
+      title: "Kỵ Sĩ Bóng Đêm",
+      image: "https://image.tmdb.org/t/p/w500/qJ2tW6WMUDux911r6m7haRef0WH.jpg",
+      genre: "Hành Động, Hài Hước",
+      year: "2025"
     },
     {
       id: 3,
-      title: "Top Gun: Maverick",
-      image: "https://image.tmdb.org/t/p/original/7RyHsO4yDXtBv1zUU3mTpHeQ0d5.jpg",
-      genre: "Action, Drama",
-      year: "2024"
+      title: "Ma Trận",
+      image: "https://image.tmdb.org/t/p/w500/f89U3ADr1oiB1s9GkdPOEpXUk5H.jpg",
+      genre: "Hành Động, Bi Kịch",
+      year: "2025"
     }
   ];
 
