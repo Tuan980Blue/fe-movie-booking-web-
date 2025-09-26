@@ -88,7 +88,7 @@ const MoviesPage = () => {
             ))}
             <button
               onClick={() => { setStatus('All'); setPage(1); }}
-              className={`px-4 py-2 rounded-full text-sm font-medium border transition ${status === 'All' ? 'border-[#f53d7a] text-[#f53d7a] bg-[#f53d7a]/10' : 'border-neutral-lightGray text-neutral-darkGray hover:bg-neutral-lightGray/30'}`}
+              className={`px-4 py-2 rounded-full text-sm font-medium border transition ${status === 'All' ? 'border-[#f53d7a] text-[#f53d7a] bg-[#f53d7a]/10' : 'border-neutral-lightGray text-neutral-50 hover:bg-neutral-lightGray/30'}`}
             >
               Tất cả
             </button>
