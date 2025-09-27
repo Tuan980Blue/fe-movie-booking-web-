@@ -48,19 +48,12 @@ const RegisterForm = ({ onRegister, onSwitchToLogin }) => {
 
   return (
     <div
-      className="min-h-screen flex items-center justify-center p-4 relative overflow-hidden"
-      style={{
-        background: `linear-gradient(135deg, ${COLORS.PRIMARY.PURPLE} 0%, ${COLORS.PRIMARY.PINK} 100%)`
-      }}
-    >
+      className="min-h-screen flex items-center justify-center p-4 relative overflow-hidden">
       {/* Background Overlay */}
       <div
         className="absolute inset-0"
         style={{ backgroundColor: `${COLORS.PRIMARY.BLACK}60` }}
       />
-
-      {/* Popcorn Falling Animation */}
-      <PopcornAnimation />
 
       {/* Floating Elements */}
       <div className="absolute top-10 left-10 text-neutral-white opacity-20 text-6xl">
