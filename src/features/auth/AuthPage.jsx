@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import LoginForm from './components/LoginForm';
 import RegisterForm from './components/RegisterForm';
+import PopcornAnimation from '../../components/animations/EnhancedPopcornAnimation';
 
 const AuthPage = () => {
   const [currentView, setCurrentView] = useState('login'); // 'login', 'register'
@@ -38,6 +39,9 @@ const AuthPage = () => {
 
   return (
     <div className="relative">
+      {/* Popcorn Falling Animation */}
+      <PopcornAnimation />
+
       <AnimatePresence mode="wait">
         {currentView === 'login' && (
           <motion.div

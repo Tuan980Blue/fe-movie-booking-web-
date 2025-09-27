@@ -1,5 +1,5 @@
-import React from 'react';
-import { motion } from 'framer-motion';
+import React, { useMemo } from 'react';
+import { motion, useReducedMotion } from 'framer-motion';
 
 const EnhancedPopcornAnimation = () => {
   // Tạo array các items với các icon khác nhau
@@ -10,27 +10,33 @@ const EnhancedPopcornAnimation = () => {
     { icon: '🎭', weight: 0.1 }, // Theater masks
     { icon: '🎪', weight: 0.1 }, // Circus tent
   ];
+  const shouldReduceMotion = useReducedMotion();
 
-  // Tạo array các items với tỷ lệ theo weight
-  const allItems = [];
-  items.forEach(item => {
-    const count = Math.floor(item.weight * 20); // Tổng ~20 items
-    for (let i = 0; i < count; i++) {
-      allItems.push(item.icon);
-    }
-  });
+  // Tạo array các items với tỷ lệ theo weight (memoized)
+  const allItems = useMemo(() => {
+    const arr = [];
+    const baseCount = shouldReduceMotion ? 10 : 20;
+    items.forEach(item => {
+      const count = Math.floor(item.weight * baseCount);
+      for (let i = 0; i < count; i++) arr.push(item.icon);
+    });
+    return arr;
+  }, [shouldReduceMotion]);
 
-  // Tạo array các popcorn với vị trí và thời gian rơi khác nhau
-  const popcornItems = Array.from({ length: 20 }, (_, i) => ({
-    id: i,
-    delay: Math.random() * 8, // Delay ngẫu nhiên 0-8s
-    duration: 4 + Math.random() * 6, // Thời gian rơi 4-10s
-    x: Math.random() * 100, // Vị trí ngang ngẫu nhiên
-    size: 0.6 + Math.random() * 0.8, // Kích thước ngẫu nhiên
-    rotation: Math.random() * 720, // Góc xoay ngẫu nhiên (2 vòng)
-    icon: allItems[Math.floor(Math.random() * allItems.length)],
-    opacity: 0.3 + Math.random() * 0.4, // Độ trong suốt ngẫu nhiên
-  }));
+  // Tạo array các popcorn với vị trí và thời gian rơi khác nhau (memoized)
+  const popcornItems = useMemo(() => {
+    const len = shouldReduceMotion ? 12 : 24;
+    return Array.from({ length: len }, (_, i) => ({
+      id: i,
+      delay: Math.random() * 8,
+      duration: 4 + Math.random() * 6,
+      x: Math.random() * 100,
+      size: 1.1 + Math.random() * 1.2,
+      rotation: Math.random() * 720,
+      icon: allItems[Math.floor(Math.random() * allItems.length)],
+      opacity: 0.3 + Math.random() * 0.4,
+    }));
+  }, [allItems, shouldReduceMotion]);
 
   return (
     <div className="absolute inset-0 overflow-hidden pointer-events-none">
@@ -43,6 +49,7 @@ const EnhancedPopcornAnimation = () => {
             top: '-100px',
             fontSize: `${item.size}em`,
             opacity: item.opacity,
+            willChange: 'transform, opacity',
           }}
           initial={{
             y: -100,
@@ -50,7 +57,7 @@ const EnhancedPopcornAnimation = () => {
             scale: 0.5
           }}
           animate={{
-            y: typeof window !== 'undefined' ? window.innerHeight + 100 : 1000,
+            y: '110vh',
             rotate: item.rotation + 720, // Xoay 2 vòng khi rơi
             scale: 1,
           }}

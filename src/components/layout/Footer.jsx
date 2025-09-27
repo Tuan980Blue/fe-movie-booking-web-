@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import { FaFacebook, FaInstagram, FaYoutube, FaTiktok } from 'react-icons/fa';
 import { COLORS } from '../../shared/constants/colors';
 import backgroundFooter from '../../assets/images/background-footer.png';
+import PopcornAnimation from "../../components/animations/EnhancedPopcornAnimation";
 
 const Footer = () => {
   // Lấy năm hiện tại cho copyright
@@ -19,6 +20,9 @@ const Footer = () => {
         backgroundRepeat: 'no-repeat'
       }}
     >
+      {/* Popcorn Falling Animation */}
+      <PopcornAnimation />
+
       {/* Background Pattern - Tạo hiệu ứng cinema */}
       <div className="absolute inset-0 opacity-5">
         <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-r from-primary-pink to-accent-orange opacity-10"></div>
