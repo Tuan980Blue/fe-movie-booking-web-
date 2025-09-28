@@ -185,18 +185,10 @@ const MoviesPage = () => {
                     <div className="absolute inset-0 bg-black/55 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                       <div className="absolute inset-0 p-4 flex flex-col items-center justify-center text-white">
                         <div className="w-full max-w-[210px] space-y-3">
-                          <Link
-                            to={`/movies/${m.id}`}
-                            className="block w-full text-center text-sm md:text-base font-extrabold tracking-wide bg-[#a64bd6] hover:bg-[#9340c5] text-white rounded-md py-2"
-                          >
-                            > CHI TIẾT
-                          </Link>
-                          <Link
-                            to={`/user/booking/${m.id}`}
-                            className="block w-full text-center text-sm md:text-base font-extrabold tracking-wide bg-white text-[#1f1f1f] hover:bg-neutral-lightGray rounded-md py-2"
-                          >
-                            MUA VÉ
-                          </Link>
+                          <div className="w-full max-w-[200px] space-y-2.5">
+                            <Link to={`/movies/${m.id}`} className="block w-full text-center text-sm font-extrabold tracking-wide bg-gray-50 hover:bg-gray-300 text-pink-500 rounded-md py-2">> CHI TIẾT</Link>
+                            <Link to={`/movies/${m.id}`} className="block w-full text-center text-sm font-extrabold tracking-wide bg-pink-500 text-white hover:bg-cinema-neonPink rounded-md py-2">MUA VÉ</Link>
+                          </div>
                           <div className="mt-3 text-left space-y-1 text-[13px] md:text-sm">
                             {m.durationMinutes ? (
                               <div><span className="font-bold">Thời lượng:</span> {m.durationMinutes} phút</div>
