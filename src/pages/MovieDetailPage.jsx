@@ -31,6 +31,11 @@ const MovieDetailPage = () => {
     }
   }, [id]);
 
+  // Ensure page scrolls to top when navigating to a new movie detail
+  useEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
+  }, [id]);
+
   const formatDate = (dateString) => {
     if (!dateString) return '';
     return new Date(dateString).toLocaleDateString('vi-VN');
@@ -115,7 +120,7 @@ const MovieDetailPage = () => {
                   <img
                     src={movie.posterUrl}
                     alt={movie.title}
-                    className="w-full max-w-sm mx-auto xl:mx-0 rounded-2xl shadow-2xl transform transition-all duration-500 group-hover:scale-105 border-4 border-white/30"
+                    className="w-full max-w-sm mx-auto xl:mx-0 rounded-2xl shadow-2xl transform transition-all duration-500 border-4 border-white/30"
                   />
 
                   {/* Age Rating Badge */}
@@ -131,7 +136,7 @@ const MovieDetailPage = () => {
                   )}
                   {/* Glow Effect */}
                   <div
-                    className="absolute inset-0 rounded-2xl bg-gradient-to-t from-primary-pink/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                    className="absolute inset-0 rounded-2xl bg-gradient-to-t from-primary-pink/30 to-transparent opacity-0 transition-opacity duration-500"></div>
                 </div>
               </motion.div>
 
@@ -334,7 +339,7 @@ const MovieDetailPage = () => {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Left Column - Showtimes */}
           <div className="lg:col-span-2">
-            <Showtimes/>
+            <Showtimes movieId={movie.id}/>
           </div>
           {/* Right Column - Booking Form */}
           <div className="lg:col-span-1">

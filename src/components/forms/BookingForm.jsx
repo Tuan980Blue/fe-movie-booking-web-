@@ -1,67 +1,66 @@
 import React from 'react';
-import {motion} from "framer-motion";
-import {Link} from "react-router-dom";
+import { motion } from "framer-motion";
+import { Link } from "react-router-dom";
 
 const BookingForm = () => {
   return (
     <div className={""}>
-      {/* Booking Form */}
       <motion.div
-        className="bg-white sticky top-6 rounded-2xl shadow-xl border border-gray-100 overflow-hidden"
+        className="bg-white sticky top-6 rounded-2xl shadow-xl border border-gray-200 overflow-hidden"
         initial={{ opacity: 0, x: 20 }}
         animate={{ opacity: 1, x: 0 }}
-        transition={{ duration: 0.5 }}
+        transition={{ duration: 0.4 }}
       >
-        {/* Header */}
-        <div className="px-6 py-4 flex items-center justify-center gap-3">
-          <div className="ml-4 h-px bg-primary-pink flex-1"></div>
-          <span className="text-xl">🎫</span>
-          <h3 className="text-primary-pink font-bold text-lg">ĐẶT VÉ</h3>
-          <div className="mr-4 h-px bg-primary-pink flex-1"></div>
+        {/* Header (Dark bar with underline) */}
+        <div className="relative bg-[#241634] text-white px-6 py-4 flex items-center gap-3">
+          <span className="text-2xl">🎟️</span>
+          <h3 className="font-bold text-2xl tracking-wide">ĐẶT VÉ</h3>
+          <div className="absolute left-1/2 -translate-x-1/2 bottom-0 h-0.5 w-24 bg-primary-pink"></div>
         </div>
 
         {/* Form Content */}
-        <div className="p-6 space-y-4">
-          {/* Movie Selection */}
-          <div className="relative">
-            <label className="block text-sm font-semibold text-neutral-darkGray mb-2">
-              🎬 Chọn Phim
-            </label>
-            <select className="w-full px-4 py-3 border-2 border-neutral-lightGray rounded-lg focus:border-primary-pink focus:outline-none transition-colors">
-              <option>Title</option>
-            </select>
-            <svg className="absolute right-3 top-9 w-5 h-5 text-neutral-lightGray" fill="currentColor" viewBox="0 0 20 20">
+        <div className="p-5 space-y-4">
+          {/* Chọn Phim */}
+          <div className="relative flex items-center justify-between border-2 border-black rounded-md px-4 py-3 bg-white">
+            <div className="flex items-center gap-3">
+              <div className="border-2 border-black rounded-md w-11 h-11 flex items-center justify-center text-xl">🎬</div>
+              <select className="appearance-none bg-transparent text-lg font-medium focus:outline-none">
+                <option>Chọn Phim</option>
+              </select>
+            </div>
+            <svg className="w-5 h-5 text-black" fill="currentColor" viewBox="0 0 20 20">
               <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
             </svg>
           </div>
 
-          {/* Date Selection */}
-          <div className="relative">
-            <label className="block text-sm font-semibold text-neutral-darkGray mb-2">
-              📅 Chọn Ngày
-            </label>
-            <select className="w-full px-4 py-3 border-2 border-neutral-lightGray rounded-lg focus:border-primary-pink focus:outline-none transition-colors">
-              <option>Hôm nay ({new Date().getDate()}/{new Date().getMonth() + 1})</option>
-              <option>Ngày mai ({new Date().getDate() + 1}/{new Date().getMonth() + 1})</option>
-            </select>
-            <svg className="absolute right-3 top-9 w-5 h-5 text-neutral-lightGray" fill="currentColor" viewBox="0 0 20 20">
+          {/* Chọn Ngày */}
+          <div className="relative flex items-center justify-between border-2 border-black rounded-md px-4 py-3 bg-white">
+            <div className="flex items-center gap-3">
+              <div className="border-2 border-black rounded-md w-11 h-11 flex items-center justify-center text-xl">📅</div>
+              <select className="appearance-none bg-transparent text-lg font-medium focus:outline-none">
+                <option>Chọn Ngày</option>
+                <option>Hôm nay ({new Date().getDate()}/{new Date().getMonth() + 1})</option>
+                <option>Ngày mai ({new Date().getDate() + 1}/{new Date().getMonth() + 1})</option>
+              </select>
+            </div>
+            <svg className="w-5 h-5 text-black" fill="currentColor" viewBox="0 0 20 20">
               <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
             </svg>
           </div>
 
-          {/* Showtime Selection */}
-          <div className="relative">
-            <label className="block text-sm font-semibold text-neutral-darkGray mb-2">
-              🕐 Chọn Suất
-            </label>
-            <select className="w-full px-4 py-3 border-2 border-neutral-lightGray rounded-lg focus:border-primary-pink focus:outline-none transition-colors">
-              <option>Chọn suất chiếu</option>
-              <option>18:00</option>
-              <option>20:10</option>
-              <option>21:10</option>
-              <option>22:20</option>
-            </select>
-            <svg className="absolute right-3 top-9 w-5 h-5 text-neutral-lightGray" fill="currentColor" viewBox="0 0 20 20">
+          {/* Chọn Suất */}
+          <div className="relative flex items-center justify-between border-2 border-black rounded-md px-4 py-3 bg-white">
+            <div className="flex items-center gap-3">
+              <div className="border-2 border-black rounded-md w-11 h-11 flex items-center justify-center text-xl">📆</div>
+              <select className="appearance-none bg-transparent text-lg font-medium focus:outline-none">
+                <option>Chọn Suất</option>
+                <option>18:00</option>
+                <option>20:10</option>
+                <option>21:10</option>
+                <option>22:20</option>
+              </select>
+            </div>
+            <svg className="w-5 h-5 text-black" fill="currentColor" viewBox="0 0 20 20">
               <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
             </svg>
           </div>
@@ -69,9 +68,9 @@ const BookingForm = () => {
           {/* CTA Button */}
           <Link
             to={``}
-            className="block w-full bg-primary-pink text-white py-4 rounded-xl font-bold text-center hover:bg-cinema-neonPink transition-colors shadow-lg"
+            className="mt-2 block w-full text-center text-xl font-semibold bg-white text-black py-4 rounded-xl border-2 border-primary-pink shadow-[0_6px_0_#c71f79] hover:bg-cinema-neonPink transition-colors"
           >
-            🎫 MUA VÉ
+            MUA VÉ
           </Link>
         </div>
       </motion.div>
