@@ -88,7 +88,7 @@ const Showtimes = ({ movieId }) => {
               <span className="absolute -bottom-2 left-6 w-3 h-3 bg-primary-purple rotate-45 rounded-[2px]"></span>
             </div>
 
-            <div className="grid grid-cols-3 sm:grid-cols-5 md:grid-cols-7 lg:grid-cols-9 gap-3">
+            <div className="grid grid-cols-3 sm:grid-cols-5 md:grid-cols-7 lg:grid-cols-8 gap-3">
               {group.items.map(item => (
                 <button
                   key={`filled-${item.id}`}
