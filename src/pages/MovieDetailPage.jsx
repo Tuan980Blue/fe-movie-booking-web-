@@ -1,13 +1,13 @@
-import React, { useState, useEffect } from 'react';
-import { useParams, Link } from 'react-router-dom';
-import { motion, AnimatePresence } from 'framer-motion';
-import { getMovieDetailApi } from '../services/movieService';
-import { COLORS } from '../shared/constants/colors';
+import React, {useState, useEffect} from 'react';
+import {useParams, Link} from 'react-router-dom';
+import {motion, AnimatePresence} from 'framer-motion';
+import {getMovieDetailApi} from '../services/movieService';
+import {COLORS} from '../shared/constants/colors';
 import Showtimes from "../components/moviedetail/Showtimes";
 import BookingForm from "../components/forms/BookingForm";
 
 const MovieDetailPage = () => {
-  const { id } = useParams();
+  const {id} = useParams();
   const [movie, setMovie] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -53,7 +53,8 @@ const MovieDetailPage = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary-purple to-primary-pink">
+      <div
+        className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary-purple to-primary-pink">
         <div className="text-center">
           <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-white mx-auto mb-4"></div>
           <p className="text-white text-lg">Đang tải thông tin phim...</p>
@@ -64,7 +65,8 @@ const MovieDetailPage = () => {
 
   if (error || !movie) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary-purple to-primary-pink">
+      <div
+        className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary-purple to-primary-pink">
         <div className="text-center">
           <div className="text-6xl mb-4">🎬</div>
           <h2 className="text-2xl font-bold text-white mb-4">Không tìm thấy phim</h2>
@@ -92,9 +94,9 @@ const MovieDetailPage = () => {
           style={{
             backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.7)), url(${movie.backdropUrl})`
           }}
-          initial={{ scale: 1.1 }}
-          animate={{ scale: 1 }}
-          transition={{ duration: 1.5 }}
+          initial={{scale: 1.1}}
+          animate={{scale: 1}}
+          transition={{duration: 1.5}}
         />
         {/* Main Content */}
         <div className="relative z-10 h-full flex items-end">
@@ -103,9 +105,9 @@ const MovieDetailPage = () => {
 
               {/* Movie Poster với Enhanced Effects */}
               <motion.div
-                initial={{ opacity: 0, y: 50, rotateY: -15 }}
-                animate={{ opacity: 1, y: 0, rotateY: 0 }}
-                transition={{ duration: 1, ease: "easeOut" }}
+                initial={{opacity: 0, y: 50, rotateY: -15}}
+                animate={{opacity: 1, y: 0, rotateY: 0}}
+                transition={{duration: 1, ease: "easeOut"}}
                 className="xl:col-span-4 relative"
               >
                 <div className="relative group">
@@ -119,24 +121,25 @@ const MovieDetailPage = () => {
                   {/* Age Rating Badge */}
                   {movie.rated && (
                     <motion.div
-                      initial={{ scale: 0, rotate: -10 }}
-                      animate={{ scale: 1, rotate: 0 }}
-                      transition={{ duration: 0.5, delay: 0.3 }}
+                      initial={{scale: 0, rotate: -10}}
+                      animate={{scale: 1, rotate: 0}}
+                      transition={{duration: 0.5, delay: 0.3}}
                       className="absolute -top-4 -right-4 bg-accent-red text-white px-3 py-2 rounded-full text-sm font-bold shadow-lg border-2 border-white"
                     >
                       {movie.rated}
                     </motion.div>
                   )}
                   {/* Glow Effect */}
-                  <div className="absolute inset-0 rounded-2xl bg-gradient-to-t from-primary-pink/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                  <div
+                    className="absolute inset-0 rounded-2xl bg-gradient-to-t from-primary-pink/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
                 </div>
               </motion.div>
 
               {/* Movie Information */}
               <motion.div
-                initial={{ opacity: 0, y: 50 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 1, delay: 0.2 }}
+                initial={{opacity: 0, y: 50}}
+                animate={{opacity: 1, y: 0}}
+                transition={{duration: 1, delay: 0.2}}
                 className="xl:col-span-8 text-white relative"
               >
                 {/* Title Section */}
@@ -154,9 +157,9 @@ const MovieDetailPage = () => {
 
                 {/* Status Badge */}
                 <motion.div
-                  initial={{ opacity: 0, scale: 0.8 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  transition={{ duration: 0.5, delay: 0.5 }}
+                  initial={{opacity: 0, scale: 0.8}}
+                  animate={{opacity: 1, scale: 1}}
+                  transition={{duration: 0.5, delay: 0.5}}
                   className={`px-3 py-2 mb-4 max-w-fit rounded-full text-xs font-bold shadow-lg ${
                     movie.status === 'NowShowing' ? 'bg-accent-orange text-white' :
                       movie.status === 'ComingSoon' ? 'bg-accent-yellow text-neutral-darkGray' :
@@ -191,7 +194,8 @@ const MovieDetailPage = () => {
                     <span className="relative z-10 flex items-center justify-center gap-3">
                       🎫 MUA VÉ NGAY
                     </span>
-                    <div className="absolute inset-0 opacity-0 group-hover:opacity-40 transition-opacity duration-300 bg-gradient-to-r from-primary-pink to-accent-orange"></div>
+                    <div
+                      className="absolute inset-0 opacity-0 group-hover:opacity-40 transition-opacity duration-300 bg-gradient-to-r from-primary-pink to-accent-orange"></div>
                   </Link>
 
                   {movie.trailerUrl && (
@@ -213,27 +217,27 @@ const MovieDetailPage = () => {
       <AnimatePresence>
         {showTrailer && youtubeId && (
           <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
+            initial={{opacity: 0}}
+            animate={{opacity: 1}}
+            exit={{opacity: 0}}
             className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-4"
             onClick={() => setShowTrailer(false)}
           >
             <motion.div
-              initial={{ scale: 0.8, opacity: 0 }}
-              animate={{ scale: [0.8, 1.05, 1], opacity: 1 }}
-              exit={{ scale: 0.8, opacity: 0 }}
+              initial={{scale: 0.8, opacity: 0}}
+              animate={{scale: [0.8, 1.05, 1], opacity: 1}}
+              exit={{scale: 0.8, opacity: 0}}
               transition={{
                 duration: 0.3,
-                scale: { duration: 0.4, ease: "easeOut" }
+                scale: {duration: 0.4, ease: "easeOut"}
               }}
               className="relative max-w-5xl w-full aspect-video bg-black rounded-2xl overflow-hidden border border-white/20 shadow-2xl"
               onClick={(e) => e.stopPropagation()}
             >
               {/* Close Button */}
               <motion.button
-                whileHover={{ scale: 1.1, backgroundColor: "rgba(0,0,0,0.8)" }}
-                whileTap={{ scale: 0.95 }}
+                whileHover={{scale: 1.1, backgroundColor: "rgba(0,0,0,0.8)"}}
+                whileTap={{scale: 0.95}}
                 onClick={() => setShowTrailer(false)}
                 className="absolute top-4 right-4 z-10 bg-black/50 text-white w-12 h-12 rounded-full flex items-center justify-center hover:bg-black/80 transition-all duration-300 border border-white/20"
               >
@@ -241,7 +245,8 @@ const MovieDetailPage = () => {
               </motion.button>
 
               {/* Movie Title */}
-              <div className="absolute top-4 left-4 z-10 bg-black/50 backdrop-blur-sm rounded-xl px-4 py-2 border border-white/20">
+              <div
+                className="absolute top-4 left-4 z-10 bg-black/50 backdrop-blur-sm rounded-xl px-4 py-2 border border-white/20">
                 <h3 className="text-white font-bold text-lg">
                   {movie.title} - Official Trailer
                 </h3>
@@ -262,79 +267,79 @@ const MovieDetailPage = () => {
       </AnimatePresence>
 
       {/* Main Content Section */}
-      <div className="">
-        <div className="max-w-7xl mx-auto px-4 lg:px-8">
-          <div className="bg-white/10 backdrop-blur-md p-4 border border-white/20 rounded-3xl shadow-2xl overflow-hidden min-h-[400px]">
-            {/* Tab Content */}
-            <div className="p-8">
-              <AnimatePresence mode="wait">
-                  <motion.div
-                    key="overview"
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -20 }}
-                    transition={{ duration: 0.3 }}
-                  >
-                    <h3 className="text-xl font-bold text-gray-100 mb-4">📖 Tóm tắt nội dung</h3>
-                    <div className="prose max-w-none text-gray-50 leading-relaxed">
-                      <p className="mb-4 text-base">{movie.description}</p>
+      <div className="max-w-7xl mx-auto px-4 lg:px-8">
+        <div className="bg-pink/10 backdrop-blur-md p-4 border border-white/20 rounded-3xl shadow-2xl overflow-hidden">
+          <div className="px-8">
+            <AnimatePresence mode="wait">
+              <motion.div
+                key="overview"
+                initial={{opacity: 0, y: 20}}
+                animate={{opacity: 1, y: 0}}
+                exit={{opacity: 0, y: -20}}
+                transition={{duration: 0.3}}
+              >
+                <h3 className="text-lg font-bold text-gray-100 mb-2">📖 TỔNG QUAN</h3>
+                <div className="prose max-w-none text-gray-50 leading-relaxed">
+                  <div className={"mb-4"}>
+                    <p className="text-balance">{movie.description}</p>
+                  </div>
 
-                      {/* Director & Cast Info */}
-                      <div className="grid lg:grid-cols-2 gap-8 mt-8">
-                        <div className="bg-white/10 backdrop-blur-md rounded-xl p-4 border border-white/20 text-white">
-                          <div>
-                            <h4 className="text-lg font-bold mb-2 flex items-center gap-2">
-                              🎬 Đạo diễn
-                            </h4>
-                            <p className="text-base mb-2">{movie.director}</p>
-                          </div>
-                          <div>
-                            <h4 className="text-lg font-bold mb-2 flex items-center gap-2">
-                              👥 Diễn viên chính
-                            </h4>
-                            <div className="text-sm">
-                              <p className="text-sm opacity-90 whitespace-pre-wrap">{movie.actors}</p>
-                            </div>
-                          </div>
-                        </div>
-
-                        <div className="bg-white/10 backdrop-blur-md rounded-xl p-4 border border-white/20 text-white">
-                          {/* Genres */}
-                          {movie.genres && (
-                            <div className="mt-8">
-                              <h4 className="text-base font-bold text-gray-100 mb-3">🏷️ Thể loại</h4>
-                              <div className="flex flex-wrap gap-2">
-                                {movie.genres.map((genre) => (
-                                  <span
-                                    key={genre.id}
-                                    className="px-3 py-1 bg-primary-pink/10 rounded-full text-primary-pink font-semibold border border-primary-pink/20 transition-all duration-300 text-sm"
-                                  >
-                                {genre.name}
-                              </span>
-                                ))}
-                              </div>
-                            </div>
-                          )}
+                  {/* Director & Cast Info */}
+                  <div className="grid lg:grid-cols-2 gap-8 mt-4">
+                    <div className="bg-white/10 backdrop-blur-md rounded-xl px-8 py-4 border border-white/20 text-white">
+                      <div>
+                        <h4 className="text-lg text-gray-200 font-bold mb-2 flex items-center gap-2">
+                          🎬 Đạo diễn
+                        </h4>
+                        <p className="text-base mb-2">{movie.director}</p>
+                      </div>
+                      <div>
+                        <h4 className="text-lg text-gray-200 font-bold mb-2 flex items-center gap-2">
+                          👥 Diễn viên
+                        </h4>
+                        <div className="text-sm">
+                          <p className="text-sm opacity-90 whitespace-pre-wrap">{movie.actors}</p>
                         </div>
                       </div>
                     </div>
-                  </motion.div>
-              </AnimatePresence>
-            </div>
+
+                    <div className="bg-white/10 backdrop-blur-md rounded-xl px-8 py-4 border border-white/20 text-white">
+                      {/* Genres */}
+                      {movie.genres && (
+                        <div className="mt-8">
+                          <h4 className="text-base font-bold text-gray-200 mb-3">🏷️ Thể loại</h4>
+                          <div className="flex flex-wrap gap-2">
+                            {movie.genres.map((genre) => (
+                              <span
+                                key={genre.id}
+                                className="px-3 py-1 bg-gray/100 rounded-full text-primary-pink font-semibold border border-primary-pink/20 transition-all duration-300 text-sm"
+                              >
+                                {genre.name}
+                              </span>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </motion.div>
+            </AnimatePresence>
           </div>
-           {/* Booking Section */}
-           <div className="mt-8">
-             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-               {/* Left Column - Showtimes */}
-               <div className="lg:col-span-2">
-                 <Showtimes/>
-               </div>
-               {/* Right Column - Booking Form */}
-               <div className="lg:col-span-1">
-                 <BookingForm/>
-               </div>
-             </div>
-           </div>
+        </div>
+      </div>
+
+      {/* Showtime &  Booking Section */}
+      <div className="max-w-7xl mx-auto px-4 lg:px-8 mt-8">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {/* Left Column - Showtimes */}
+          <div className="lg:col-span-2">
+            <Showtimes/>
+          </div>
+          {/* Right Column - Booking Form */}
+          <div className="lg:col-span-1">
+            <BookingForm/>
+          </div>
         </div>
       </div>
     </div>

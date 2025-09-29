@@ -4,13 +4,13 @@ import {Link} from "react-router-dom";
 
 const BookingForm = () => {
   return (
-    <div>
+    <div className={""}>
       {/* Booking Form */}
       <motion.div
+        className="bg-white sticky top-6 rounded-2xl shadow-xl border border-gray-100 overflow-hidden"
         initial={{ opacity: 0, x: 20 }}
         animate={{ opacity: 1, x: 0 }}
-        transition={{ duration: 0.6, delay: 0.4 }}
-        className="bg-white rounded-2xl shadow-lg overflow-hidden"
+        transition={{ duration: 0.5 }}
       >
         {/* Header */}
         <div className="px-6 py-4 flex items-center justify-center gap-3">
