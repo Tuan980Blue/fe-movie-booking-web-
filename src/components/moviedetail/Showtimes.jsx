@@ -1,8 +1,10 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import {motion} from "framer-motion";
+import { useNavigate } from 'react-router-dom';
 import { getShowtimesByMovieApi } from '../../services/showtimeService';
 
 const Showtimes = ({ movieId }) => {
+  const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [showtimes, setShowtimes] = useState([]);
@@ -92,6 +94,9 @@ const Showtimes = ({ movieId }) => {
               {group.items.map(item => (
                 <button
                   key={`filled-${item.id}`}
+                  onClick={() => {
+                    navigate('/booking/seat-selection', { state: { showtime: item } });
+                  }}
                   className="px-5 py-2 rounded-lg text-sm font-semibold transition-all bg-primary-pink text-white border border-primary-pink hover:brightness-110 focus:outline-none focus:ring-2 focus:ring-primary-pink/40"
                 >
                   {formatTime(item.startUtc)}

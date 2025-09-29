@@ -4,6 +4,9 @@ const endpoints = {
     refresh: '/auth/refresh-token',
     register: '/auth/register',
   },
+  cinemas: {
+    roomSeatLayout: (cinemaId, roomId) => `/cinemas/${cinemaId}/rooms/${roomId}/seats/layout`,
+  },
   users: {
     me: '/users/me',
     updateProfile: '/users/me',

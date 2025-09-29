@@ -25,11 +25,13 @@ import AuthPage from '../features/auth/AuthPage';
 // Protected Pages
 import ProfilePage from '../pages/user/ProfilePage';
 import MyBookingsPage from '../pages/user/MyBookingsPage';
-import BookingPage from '../pages/BookingPage';
-import PaymentPage from '../pages/PaymentPage';
+import PaymentPage from '../features/booking/PaymentPage';
 
 // Admin Pages
 import AdminDashboard from '../pages/admin/Dashboard';
+import SeatSelectionPage from '../features/booking/SeatSelectionPage';
+import BookingLayout from '../layouts/BookingLayout';
+import BookingCompletePage from "../features/booking/BookingCompletePage";
 
 // Protected Route Component: Chặn truy cập nếu chưa đăng nhập
 const ProtectedRoute = ({ children }) => {
@@ -95,9 +97,18 @@ const AppRouter = () => {
         }>
           <Route path="profile" element={<ProfilePage />} />
           <Route path="my-bookings" element={<MyBookingsPage />} />
-          <Route path="booking/:movieId" element={<BookingPage />} />
-          <Route path="payment" element={<PaymentPage />} />
         </Route>
+      </Route>
+
+      {/* Booking flow - protected and nested */}
+      <Route path="/booking" element={
+        <ProtectedRoute>
+          <BookingLayout />
+        </ProtectedRoute>
+      }>
+        <Route path="seat-selection" element={<SeatSelectionPage />} />
+        <Route path="payment" element={<PaymentPage />} />
+        <Route path="complete" element={<BookingCompletePage />} />
       </Route>
 
       {/* Admin Routes: chỉ admin có thể truy cập */}
