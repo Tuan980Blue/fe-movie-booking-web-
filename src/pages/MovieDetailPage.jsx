@@ -1,15 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { getMovieDetailApi } from '../services/movieService';
 import { COLORS } from '../shared/constants/colors';
+import Showtimes from "../components/moviedetail/Showtimes";
+import BookingForm from "../components/forms/BookingForm";
 
 const MovieDetailPage = () => {
   const { id } = useParams();
   const [movie, setMovie] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-  const [activeTab, setActiveTab] = useState('info');
+  const [showTrailer, setShowTrailer] = useState(false);
 
   useEffect(() => {
     const fetchMovieDetail = async () => {
@@ -41,6 +43,14 @@ const MovieDetailPage = () => {
     return hours > 0 ? `${hours}h ${mins}m` : `${mins}m`;
   };
 
+  // Lấy YouTube video ID từ trailerUrl
+  const getYouTubeId = (url) => {
+    if (!url) return null;
+    const regExp = /^.*(youtu\.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
+    const match = url.match(regExp);
+    return (match && match[2].length === 11) ? match[2] : null;
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary-purple to-primary-pink">
@@ -70,158 +80,127 @@ const MovieDetailPage = () => {
     );
   }
 
-  return (
-    <div className="min-h-screen mb-8 lg:mb-4 bg-gradient-to-br from-primary-purple to-primary-pink">
-      {/* Hero Section with Backdrop */}
-      <div className="relative h-[80vh] sm:h-[75vh] lg:h-[70vh] overflow-hidden">
-        {/* Backdrop Image - Chỉ hiển thị phần trên */}
-        <div
-          className="absolute inset-0 bg-cover bg-center"
-          style={{
-            backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.6)), url(${movie.backdropUrl})`
-          }}
-        />
+  const youtubeId = getYouTubeId(movie.trailerUrl);
 
-        {/* Content Overlay */}
-        <div className="relative h-full flex items-end">
-          <div className="max-w-7xl mx-auto px-4 lg:px-8 pb-2 sm:pb-4 lg:pb-8 w-full">
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-end">
-              {/* Poster - Nằm dưới backdrop, overlay 1/2 */}
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-primary-purple to-primary-pink mb-8 lg:mb-16">
+      {/* Hero Section - Cinema Style */}
+      <div className="relative h-[85vh] lg:h-[90vh] overflow-hidden">
+        {/* Dynamic Backdrop với Parallax Effect */}
+        <motion.div
+          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+          style={{
+            backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.7)), url(${movie.backdropUrl})`
+          }}
+          initial={{ scale: 1.1 }}
+          animate={{ scale: 1 }}
+          transition={{ duration: 1.5 }}
+        />
+        {/* Main Content */}
+        <div className="relative z-10 h-full flex items-end">
+          <div className="max-w-7xl mx-auto px-4 lg:px-8 pb-8 w-full">
+            <div className="grid grid-cols-1 xl:grid-cols-12 gap-8 items-end">
+
+              {/* Movie Poster với Enhanced Effects */}
               <motion.div
-                initial={{ opacity: 0, y: 50 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.8 }}
-                className="lg:col-span-4 relative z-10"
+                initial={{ opacity: 0, y: 50, rotateY: -15 }}
+                animate={{ opacity: 1, y: 0, rotateY: 0 }}
+                transition={{ duration: 1, ease: "easeOut" }}
+                className="xl:col-span-4 relative"
               >
-                <div className="">
-                  {/* Poster với shadow và border để tạo hiệu ứng overlay */}
+                <div className="relative group">
+                  {/* Poster Image */}
                   <img
                     src={movie.posterUrl}
                     alt={movie.title}
-                    className="w-full max-w-xs sm:max-w-sm mx-auto lg:mx-0 rounded-2xl shadow-2xl border-4 border-white/20 backdrop-blur-sm"
+                    className="w-full max-w-sm mx-auto xl:mx-0 rounded-2xl shadow-2xl transform transition-all duration-500 group-hover:scale-105 border-4 border-white/30"
                   />
+
                   {/* Age Rating Badge */}
                   {movie.rated && (
-                    <div className="absolute -top-3 -right-3 sm:-top-4 sm:-right-4 bg-accent-red text-white px-2 py-1 sm:px-3 sm:py-1 rounded-full text-xs sm:text-sm font-bold shadow-lg">
+                    <motion.div
+                      initial={{ scale: 0, rotate: -10 }}
+                      animate={{ scale: 1, rotate: 0 }}
+                      transition={{ duration: 0.5, delay: 0.3 }}
+                      className="absolute -top-4 -right-4 bg-accent-red text-white px-3 py-2 rounded-full text-sm font-bold shadow-lg border-2 border-white"
+                    >
                       {movie.rated}
-                    </div>
+                    </motion.div>
                   )}
-                  {/* Glow effect cho poster */}
-                  <div className="absolute inset-0 rounded-2xl bg-gradient-to-t from-primary-pink/20 to-transparent opacity-0 transition-opacity duration-300"></div>
+                  {/* Glow Effect */}
+                  <div className="absolute inset-0 rounded-2xl bg-gradient-to-t from-primary-pink/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
                 </div>
               </motion.div>
 
-              {/* Movie Info */}
+              {/* Movie Information */}
               <motion.div
                 initial={{ opacity: 0, y: 50 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.8, delay: 0.2 }}
-                className="lg:col-span-8 text-white relative z-10"
+                transition={{ duration: 1, delay: 0.2 }}
+                className="xl:col-span-8 text-white relative"
               >
+                {/* Title Section */}
                 <div className="mb-4">
-                  {movie.status === 'Draft' && (
-                    <span className="inline-block bg-accent-yellow text-neutral-darkGray px-3 py-1 rounded-full text-sm font-semibold mb-4">
-                      BẢN NhÁP
-                    </span>
-                  )}
-                  {movie.status === 'NowShowing' && (
-                    <span className="inline-block bg-accent-orange text-white px-3 py-1 rounded-full text-sm font-semibold mb-4">
-                      🎬 ĐANG CHIẾU
-                    </span>
-                  )}
-                  {movie.status === 'ComingSoon' && (
-                    <span className="inline-block bg-accent-yellow text-neutral-darkGray px-3 py-1 rounded-full text-sm font-semibold mb-4">
-                      📅 SẮP CHIẾU
-                    </span>
-                  )}
-                  {movie.status === 'Archived' && (
-                    <span className="inline-block bg-accent-yellow text-neutral-darkGray px-3 py-1 rounded-full text-sm font-semibold mb-4">
-                       ĐÃ CHIẾU
-                    </span>
+                  <h1 className="text-2xl lg:text-3xl xl:text-4xl font-bold mb-2 leading-tight">
+                    {movie.title}
+                  </h1>
+
+                  {movie.originalTitle && movie.originalTitle !== movie.title && (
+                    <h2 className="text-lg lg:text-xl text-white/90 mb-3 font-light">
+                      {movie.originalTitle}
+                    </h2>
                   )}
                 </div>
 
-                <h1 className="text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-bold mb-3 sm:mb-4 leading-tight">
-                  {movie.title}
-                </h1>
+                {/* Status Badge */}
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ duration: 0.5, delay: 0.5 }}
+                  className={`px-3 py-2 mb-4 max-w-fit rounded-full text-xs font-bold shadow-lg ${
+                    movie.status === 'NowShowing' ? 'bg-accent-orange text-white' :
+                      movie.status === 'ComingSoon' ? 'bg-accent-yellow text-neutral-darkGray' :
+                        movie.status === 'Archived' ? 'bg-neutral-lightGray text-neutral-darkGray' :
+                          'bg-primary-pink text-white'
+                  }`}
+                >
+                  {movie.status === 'NowShowing' ? '🎬 ĐANG CHIẾU' :
+                    movie.status === 'ComingSoon' ? '📅 SẮP CHIẾU' :
+                      movie.status === 'Archived' ? '📰 ĐÃ CHIẾU' : '🎬'}
+                </motion.div>
 
-                {movie.originalTitle && movie.originalTitle !== movie.title && (
-                  <h2 className="text-lg sm:text-xl lg:text-2xl text-white opacity-80 mb-4 sm:mb-6">
-                    {movie.originalTitle}
-                  </h2>
-                )}
-
-                {/* Movie Meta */}
-                <div className="flex flex-wrap items-center gap-3 sm:gap-4 lg:gap-6 mb-4 sm:mb-6 text-sm sm:text-base lg:text-lg">
-                  {movie.durationMinutes && (
-                    <div className="flex items-center gap-2">
-                      <span className="text-accent-yellow">⏱️</span>
-                      <span>{formatDuration(movie.durationMinutes)}</span>
-                    </div>
-                  )}
-                  {movie.releaseDate && (
-                    <div className="flex items-center gap-2">
-                      <span className="text-accent-yellow">📅</span>
-                      <span>{formatDate(movie.releaseDate)}</span>
-                    </div>
-                  )}
-                  {movie.director && (
-                    <div className="flex items-center gap-2">
-                      <span className="text-accent-yellow">🎭</span>
-                      <span className="truncate max-w-[200px] sm:max-w-none">{movie.director}</span>
-                    </div>
-                  )}
-                  {movie.actors && (
-                    <div className="flex items-center gap-2">
-                      <span className="text-accent-yellow">🎭</span>
-                      <span className="truncate max-w-[200px] sm:max-w-none">{movie.actors}</span>
-                    </div>
-                  )}
-                </div>
-
-                {/* Genres */}
-                {movie.genres && movie.genres.length > 0 && (
-                  <div className="flex flex-wrap gap-2 mb-4 sm:mb-6">
-                    {movie.genres.map((genre) => (
-                      <span
-                        key={genre.id}
-                        className="px-2 sm:px-3 py-1 bg-white bg-opacity-20 backdrop-blur-sm rounded-full text-xs sm:text-sm border border-white border-opacity-30"
-                      >
-                        {genre.name}
-                      </span>
-                    ))}
+                {/* Movie Stats */}
+                <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+                  <div className="bg-white/10 backdrop-blur-md rounded-xl p-4 border border-white/20">
+                    <div className="text-accent-yellow text-xs font-semibold mb-1">⏱️ THỜI LƯỢNG</div>
+                    <div className="text-white text-sm font-bold">{formatDuration(movie.durationMinutes)}</div>
                   </div>
-                )}
 
-                {/* CTA Buttons */}
-                <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
+                  <div className="bg-white/10 backdrop-blur-md rounded-xl p-4 border border-white/20">
+                    <div className="text-accent-yellow text-xs font-semibold mb-1">📅 KHỞI CHIẾU</div>
+                    <div className="text-white text-sm font-bold">{formatDate(movie.releaseDate)}</div>
+                  </div>
+                </div>
+
+                {/* Action Buttons */}
+                <div className="flex flex-col sm:flex-row gap-4">
                   <Link
                     to={`/user/booking/${movie.id}`}
-                    className="group relative px-6 sm:px-8 py-3 sm:py-4 bg-primary-pink rounded-xl text-white font-bold text-base sm:text-lg hover:bg-cinema-neonPink transition-all duration-300 shadow-2xl overflow-hidden"
+                    className="group relative px-6 py-3 bg-primary-pink rounded-2xl text-white font-bold text-base hover:bg-cinema-neonPink transition-all duration-300 shadow-2xl overflow-hidden transform"
                   >
-                    <span className="relative z-10 flex items-center justify-center gap-2">
-                      🎫 Mua vé ngay
-                      <motion.span
-                        animate={{ x: [0, 5, 0] }}
-                        transition={{ duration: 1.5, repeat: Infinity }}
-                      >
-                        →
-                      </motion.span>
+                    <span className="relative z-10 flex items-center justify-center gap-3">
+                      🎫 MUA VÉ NGAY
                     </span>
-                    <div className="absolute inset-0 opacity-0 group-hover:opacity-30 transition-opacity duration-300 bg-gradient-to-r from-primary-pink to-accent-orange"></div>
+                    <div className="absolute inset-0 opacity-0 group-hover:opacity-40 transition-opacity duration-300 bg-gradient-to-r from-primary-pink to-accent-orange"></div>
                   </Link>
 
                   {movie.trailerUrl && (
-                    <a
-                      href={movie.trailerUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="group px-6 sm:px-8 py-3 sm:py-4 bg-white bg-opacity-20 backdrop-blur-sm border border-white border-opacity-30 rounded-xl text-white font-bold text-base sm:text-lg hover:bg-opacity-30 transition-all duration-300"
+                    <button
+                      onClick={() => setShowTrailer(true)}
+                      className="group px-6 py-3 bg-white/20 backdrop-blur-sm border border-white/40 rounded-2xl text-white font-bold text-base hover:bg-white/30 transition-all duration-300 flex items-center justify-center gap-2"
                     >
-                      <span className="flex items-center justify-center gap-2">
-                        ▶️ Xem trailer
-                      </span>
-                    </a>
+                      ▶️ XEM TRAILER
+                    </button>
                   )}
                 </div>
               </motion.div>
@@ -230,171 +209,132 @@ const MovieDetailPage = () => {
         </div>
       </div>
 
-      {/* Content Section */}
-      <div className="mt-10">
+      {/* Trailer Modal */}
+      <AnimatePresence>
+        {showTrailer && youtubeId && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-4"
+            onClick={() => setShowTrailer(false)}
+          >
+            <motion.div
+              initial={{ scale: 0.8, opacity: 0 }}
+              animate={{ scale: [0.8, 1.05, 1], opacity: 1 }}
+              exit={{ scale: 0.8, opacity: 0 }}
+              transition={{
+                duration: 0.3,
+                scale: { duration: 0.4, ease: "easeOut" }
+              }}
+              className="relative max-w-5xl w-full aspect-video bg-black rounded-2xl overflow-hidden border border-white/20 shadow-2xl"
+              onClick={(e) => e.stopPropagation()}
+            >
+              {/* Close Button */}
+              <motion.button
+                whileHover={{ scale: 1.1, backgroundColor: "rgba(0,0,0,0.8)" }}
+                whileTap={{ scale: 0.95 }}
+                onClick={() => setShowTrailer(false)}
+                className="absolute top-4 right-4 z-10 bg-black/50 text-white w-12 h-12 rounded-full flex items-center justify-center hover:bg-black/80 transition-all duration-300 border border-white/20"
+              >
+                <span className="text-2xl font-bold">×</span>
+              </motion.button>
+
+              {/* Movie Title */}
+              <div className="absolute top-4 left-4 z-10 bg-black/50 backdrop-blur-sm rounded-xl px-4 py-2 border border-white/20">
+                <h3 className="text-white font-bold text-lg">
+                  {movie.title} - Official Trailer
+                </h3>
+              </div>
+
+              {/* YouTube Player */}
+              <iframe
+                className="w-full h-full"
+                src={`https://www.youtube.com/embed/${youtubeId}?autoplay=1&start=0&rel=0&modestbranding=1`}
+                title={`${movie.title} - Official Trailer`}
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                allowFullScreen
+                loading="lazy"
+              />
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Main Content Section */}
+      <div className="">
         <div className="max-w-7xl mx-auto px-4 lg:px-8">
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            {/* Left Column - Movie Info & Showtimes */}
-            <div className="lg:col-span-2 space-y-6">
-              {/* Movie Description */}
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6 }}
-                className="bg-primary-pink rounded-2xl p-6 text-white relative overflow-hidden"
-              >
-                <div className="relative z-10">
-                  <h3 className="text-xl font-bold mb-4">📖 Tóm tắt nội dung</h3>
-                  <p className="text-white text-sm leading-relaxed mb-4">
-                    {movie.description || 'Thông tin về nội dung phim sẽ được cập nhật sớm nhất.'}
-                  </p>
-                  <div className="text-center">
-                    <button className="w-8 h-8 bg-accent-orange rounded-full flex items-center justify-center mx-auto">
-                      <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
-                        <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
-                      </svg>
-                    </button>
-                  </div>
-                </div>
-                {/* Background Pattern */}
-                <div className="absolute inset-0 opacity-10">
-                  <div className="absolute top-4 left-4 w-2 h-2 bg-white rounded-full"></div>
-                  <div className="absolute top-8 right-8 w-1 h-1 bg-white rounded-full"></div>
-                  <div className="absolute bottom-4 left-1/4 w-1.5 h-1.5 bg-white rounded-full"></div>
-                </div>
-              </motion.div>
-
-              {/* Showtimes Section */}
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 0.2 }}
-                className="bg-white rounded-2xl p-6 shadow-lg"
-              >
-                <div className="flex items-center mb-6">
-                  <h3 className="text-xl font-bold text-neutral-darkGray">📅 Lịch chiếu</h3>
-                  <div className="ml-4 h-px bg-primary-pink flex-1"></div>
-                </div>
-
-                {/* Today's Showtimes */}
-                <div className="mb-6">
-                  <button className="w-full bg-primary-pink text-white px-4 py-3 rounded-xl font-semibold mb-4 text-left">
-                    Hôm nay, ngày {new Date().getDate()}/{new Date().getMonth() + 1}
-                  </button>
-
-                  <div className="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 gap-2">
-                    {['09:20', '10:20', '11:30', '12:30', '13:40', '14:40', '15:50', '16:50', '18:00', '19:00', '19:35', '20:10', '21:10', '21:45', '22:20'].map((time, index) => (
-                      <button
-                        key={time}
-                        className={`px-3 py-2 rounded-lg text-sm font-medium transition-all ${
-                          ['18:00', '20:10', '21:10', '22:20'].includes(time)
-                            ? 'bg-primary-pink text-white'
-                            : 'bg-white text-neutral-darkGray border border-accent-yellow hover:bg-accent-yellow hover:text-neutral-darkGray'
-                        }`}
-                      >
-                        {time}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Tomorrow's Showtimes */}
-                <div>
-                  <button className="w-full bg-primary-pink text-white px-4 py-3 rounded-xl font-semibold mb-4 text-left">
-                    Chủ Nhật, ngày {new Date().getDate() + 1}/{new Date().getMonth() + 1}
-                  </button>
-
-                  <div className="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 gap-2">
-                    {['08:40', '10:20', '10:50', '13:00', '14:25', '15:10', '16:35', '17:20', '19:00', '19:30', '20:00', '21:10', '21:40', '22:10'].map((time, index) => (
-                      <button
-                        key={time}
-                        className={`px-3 py-2 rounded-lg text-sm font-medium transition-all ${
-                          ['15:10', '16:35', '17:20', '19:00'].includes(time)
-                            ? 'bg-primary-pink text-white'
-                            : 'bg-white text-neutral-darkGray border border-accent-yellow hover:bg-accent-yellow hover:text-neutral-darkGray'
-                        }`}
-                      >
-                        {time}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              </motion.div>
-            </div>
-
-            {/* Right Column - Booking Form */}
-            <div className="lg:col-span-1 space-y-6">
-              {/* Booking Form */}
-              <motion.div
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.6, delay: 0.4 }}
-                className="bg-white rounded-2xl shadow-lg overflow-hidden"
-              >
-                {/* Header */}
-                <div className="bg-primary-purple px-6 py-4 flex items-center justify-center gap-3">
-                  <span className="text-accent-yellow text-xl">🎫</span>
-                  <h3 className="text-white font-bold text-lg">ĐẶT VÉ</h3>
-                  <span className="text-accent-yellow text-xl">🎫</span>
-                </div>
-
-                {/* Form Content */}
-                <div className="p-6 space-y-4">
-                  {/* Movie Selection */}
-                  <div className="relative">
-                    <label className="block text-sm font-semibold text-neutral-darkGray mb-2">
-                      🎬 Chọn Phim
-                    </label>
-                    <select className="w-full px-4 py-3 border-2 border-neutral-lightGray rounded-lg focus:border-primary-pink focus:outline-none transition-colors">
-                      <option>{movie.title}</option>
-                    </select>
-                    <svg className="absolute right-3 top-9 w-5 h-5 text-neutral-lightGray" fill="currentColor" viewBox="0 0 20 20">
-                      <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
-                    </svg>
-                  </div>
-
-                  {/* Date Selection */}
-                  <div className="relative">
-                    <label className="block text-sm font-semibold text-neutral-darkGray mb-2">
-                      📅 Chọn Ngày
-                    </label>
-                    <select className="w-full px-4 py-3 border-2 border-neutral-lightGray rounded-lg focus:border-primary-pink focus:outline-none transition-colors">
-                      <option>Hôm nay ({new Date().getDate()}/{new Date().getMonth() + 1})</option>
-                      <option>Ngày mai ({new Date().getDate() + 1}/{new Date().getMonth() + 1})</option>
-                    </select>
-                    <svg className="absolute right-3 top-9 w-5 h-5 text-neutral-lightGray" fill="currentColor" viewBox="0 0 20 20">
-                      <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
-                    </svg>
-                  </div>
-
-                  {/* Showtime Selection */}
-                  <div className="relative">
-                    <label className="block text-sm font-semibold text-neutral-darkGray mb-2">
-                      🕐 Chọn Suất
-                    </label>
-                    <select className="w-full px-4 py-3 border-2 border-neutral-lightGray rounded-lg focus:border-primary-pink focus:outline-none transition-colors">
-                      <option>Chọn suất chiếu</option>
-                      <option>18:00</option>
-                      <option>20:10</option>
-                      <option>21:10</option>
-                      <option>22:20</option>
-                    </select>
-                    <svg className="absolute right-3 top-9 w-5 h-5 text-neutral-lightGray" fill="currentColor" viewBox="0 0 20 20">
-                      <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
-                    </svg>
-                  </div>
-
-                  {/* CTA Button */}
-                  <Link
-                    to={`/user/booking/${movie.id}`}
-                    className="block w-full bg-primary-pink text-white py-4 rounded-xl font-bold text-center hover:bg-cinema-neonPink transition-colors shadow-lg"
+          <div className="bg-white/10 backdrop-blur-md p-4 border border-white/20 rounded-3xl shadow-2xl overflow-hidden min-h-[400px]">
+            {/* Tab Content */}
+            <div className="p-8">
+              <AnimatePresence mode="wait">
+                  <motion.div
+                    key="overview"
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -20 }}
+                    transition={{ duration: 0.3 }}
                   >
-                    🎫 MUA VÉ
-                  </Link>
-                </div>
-              </motion.div>
+                    <h3 className="text-xl font-bold text-gray-100 mb-4">📖 Tóm tắt nội dung</h3>
+                    <div className="prose max-w-none text-gray-50 leading-relaxed">
+                      <p className="mb-4 text-base">{movie.description}</p>
+
+                      {/* Director & Cast Info */}
+                      <div className="grid lg:grid-cols-2 gap-8 mt-8">
+                        <div className="bg-white/10 backdrop-blur-md rounded-xl p-4 border border-white/20 text-white">
+                          <div>
+                            <h4 className="text-lg font-bold mb-2 flex items-center gap-2">
+                              🎬 Đạo diễn
+                            </h4>
+                            <p className="text-base mb-2">{movie.director}</p>
+                          </div>
+                          <div>
+                            <h4 className="text-lg font-bold mb-2 flex items-center gap-2">
+                              👥 Diễn viên chính
+                            </h4>
+                            <div className="text-sm">
+                              <p className="text-sm opacity-90 whitespace-pre-wrap">{movie.actors}</p>
+                            </div>
+                          </div>
+                        </div>
+
+                        <div className="bg-white/10 backdrop-blur-md rounded-xl p-4 border border-white/20 text-white">
+                          {/* Genres */}
+                          {movie.genres && (
+                            <div className="mt-8">
+                              <h4 className="text-base font-bold text-gray-100 mb-3">🏷️ Thể loại</h4>
+                              <div className="flex flex-wrap gap-2">
+                                {movie.genres.map((genre) => (
+                                  <span
+                                    key={genre.id}
+                                    className="px-3 py-1 bg-primary-pink/10 rounded-full text-primary-pink font-semibold border border-primary-pink/20 transition-all duration-300 text-sm"
+                                  >
+                                {genre.name}
+                              </span>
+                                ))}
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  </motion.div>
+              </AnimatePresence>
             </div>
           </div>
+           {/* Booking Section */}
+           <div className="mt-8">
+             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+               {/* Left Column - Showtimes */}
+               <div className="lg:col-span-2">
+                 <Showtimes/>
+               </div>
+               {/* Right Column - Booking Form */}
+               <div className="lg:col-span-1">
+                 <BookingForm/>
+               </div>
+             </div>
+           </div>
         </div>
       </div>
     </div>
