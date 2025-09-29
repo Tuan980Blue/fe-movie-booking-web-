@@ -13,6 +13,10 @@ const endpoints = {
     list: '/movies',
     detail: (id) => `/movies/${id}`,
   },
+  showtimes: {
+    list: '/showtimes',
+    byMovie: (movieId) => `/showtimes/movie/${movieId}`,
+  },
   bookings: {
     create: '/bookings',
     detail: (id) => `/bookings/${id}`,
