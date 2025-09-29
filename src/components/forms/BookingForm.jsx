@@ -39,8 +39,6 @@ const BookingForm = () => {
               <div className="border-2 border-black rounded-md w-11 h-11 flex items-center justify-center text-xl">📅</div>
               <select className="appearance-none bg-transparent text-lg font-medium focus:outline-none">
                 <option>Chọn Ngày</option>
-                <option>Hôm nay ({new Date().getDate()}/{new Date().getMonth() + 1})</option>
-                <option>Ngày mai ({new Date().getDate() + 1}/{new Date().getMonth() + 1})</option>
               </select>
             </div>
             <svg className="w-5 h-5 text-black" fill="currentColor" viewBox="0 0 20 20">
@@ -54,10 +52,6 @@ const BookingForm = () => {
               <div className="border-2 border-black rounded-md w-11 h-11 flex items-center justify-center text-xl">📆</div>
               <select className="appearance-none bg-transparent text-lg font-medium focus:outline-none">
                 <option>Chọn Suất</option>
-                <option>18:00</option>
-                <option>20:10</option>
-                <option>21:10</option>
-                <option>22:20</option>
               </select>
             </div>
             <svg className="w-5 h-5 text-black" fill="currentColor" viewBox="0 0 20 20">
