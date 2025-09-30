@@ -149,7 +149,7 @@ const MovieDetailPage = () => {
               >
                 {/* Title Section */}
                 <div className="mb-4">
-                  <h1 className="text-2xl lg:text-3xl xl:text-4xl font-bold mb-2 leading-tight">
+                  <h1 className="text-2xl lg:text-3xl xl:text-4xl italic font-bold mb-2 leading-tight">
                     {movie.title}
                   </h1>
 
@@ -272,7 +272,7 @@ const MovieDetailPage = () => {
       </AnimatePresence>
 
       {/* Main Content Section */}
-      <div className="max-w-7xl mx-auto px-4 lg:px-8">
+      <div className="max-w-7xl mx-auto p-4 lg:px-8">
         <div className="bg-pink/10 backdrop-blur-md p-4 border border-white/20 rounded-3xl shadow-2xl overflow-hidden">
           <div className="px-8">
             <AnimatePresence mode="wait">
@@ -286,7 +286,7 @@ const MovieDetailPage = () => {
                 <h3 className="text-lg font-bold text-gray-100 mb-2">📖 TỔNG QUAN</h3>
                 <div className="prose max-w-none text-gray-50 leading-relaxed">
                   <div className={"mb-4"}>
-                    <p className="text-balance">{movie.description}</p>
+                    <p className="text-balance italic">{movie.description}</p>
                   </div>
 
                   {/* Director & Cast Info */}

@@ -1,7 +1,7 @@
 import React from 'react';
 import {
   HeroSection,
-  TodayShowtimesSection,
+  Promotions,
   MoviesShowcase
 } from '../components/home';
 
@@ -10,7 +10,7 @@ const HomePage = () => {
     <div className="min-h-screen">
       <HeroSection />
       <MoviesShowcase />
-      <TodayShowtimesSection />
+      <Promotions />
     </div>
   );
 };
