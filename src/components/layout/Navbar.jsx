@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
@@ -7,8 +7,35 @@ import {COLORS} from "../../shared/constants/colors";
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [activeTab, setActiveTab] = useState('home');
+  const [isMainNavFixed, setIsMainNavFixed] = useState(false);
+  const [mainNavHeight, setMainNavHeight] = useState(0);
   const { user, isAuthenticated, logout } = useAuth();
   const navigate = useNavigate();
+  const headerRef = useRef(null);
+  const mainNavRef = useRef(null);
+
+  useEffect(() => {
+    const measureHeights = () => {
+      if (mainNavRef.current) {
+        setMainNavHeight(mainNavRef.current.offsetHeight || 0);
+      }
+    };
+
+    const handleScroll = () => {
+      if (!headerRef.current) return;
+      const headerBottom = headerRef.current.getBoundingClientRect().bottom;
+      setIsMainNavFixed(headerBottom <= 0);
+    };
+
+    measureHeights();
+    handleScroll();
+    window.addEventListener('resize', measureHeights);
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => {
+      window.removeEventListener('resize', measureHeights);
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, []);
 
   const menuItems = [
     { id: 'home', label: 'TRANG CHỦ', icon: '🏠', path: '/' },
@@ -28,7 +55,7 @@ const Navbar = () => {
   };
 
   return (
-    <nav className="relative overflow-hidden shadow-lg">
+    <nav className="relative shadow-lg">
       {/* Background Pattern */}
       <div className="absolute inset-0 opacity-10">
         <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-r from-primary-pink to-accent-orange opacity-20"></div>
@@ -39,7 +66,7 @@ const Navbar = () => {
       </div>
 
       {/* Top Header Section */}
-      <div className="relative z-10 px-4 lg:px-8 py-3">
+      <div ref={headerRef} className="relative z-10 px-4 lg:px-8 py-3">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           {/* Left Side - Logo */}
           <div className="flex items-center space-x-4">
@@ -49,9 +76,9 @@ const Navbar = () => {
                 whileHover={{ scale: 1.05 }}
               >
                 <div className="w-12 h-12 rounded-full overflow-hidden shadow-lg">
-                  <img 
-                    src="/logo.png" 
-                    alt="TA MEM CINEMA Logo" 
+                  <img
+                    src="/logo.png"
+                    alt="TA MEM CINEMA Logo"
                     className="w-full h-full object-cover"
                   />
                 </div>
@@ -110,7 +137,7 @@ const Navbar = () => {
                   <span className="text-lg">👤</span>
                   <span className="font-semibold text-sm">{user?.name}</span>
                 </div>
-                
+
                 {/* User Menu */}
                 <div className="hidden sm:flex items-center space-x-2">
                   <Link to="/user/profile">
@@ -201,7 +228,10 @@ const Navbar = () => {
       <div className="h-px bg-primary-pink"></div>
 
       {/* Main Navigation */}
-      <div className="relative z-10 px-4 lg:px-8 py-2">
+      <div
+        ref={mainNavRef}
+        className={`${isMainNavFixed ? 'fixed top-0 left-0 right-0 z-50 bg-gray-900' : 'relative z-10'} px-4 lg:px-8 py-2`}
+      >
         <div className="max-w-7xl mx-auto">
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-1">
@@ -268,6 +298,9 @@ const Navbar = () => {
           </motion.div>
         </div>
       </div>
+      {isMainNavFixed && (
+        <div style={{ height: `${mainNavHeight}px` }} />
+      )}
     </nav>
   );
 };
