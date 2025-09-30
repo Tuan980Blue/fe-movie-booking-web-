@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { COLORS } from '../../../shared/constants/colors';
-import PopcornAnimation from '../../../components/animations/EnhancedPopcornAnimation';
 
 const RegisterForm = ({ onRegister, onSwitchToLogin }) => {
   const [formData, setFormData] = useState({
@@ -12,6 +11,8 @@ const RegisterForm = ({ onRegister, onSwitchToLogin }) => {
     agreeTerms: false
   });
   const [isLoading, setIsLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -48,37 +49,19 @@ const RegisterForm = ({ onRegister, onSwitchToLogin }) => {
 
   return (
     <div
-      className="min-h-screen flex items-center justify-center p-4 relative overflow-hidden">
-      {/* Background Overlay */}
-      <div
-        className="absolute inset-0"
-        style={{ backgroundColor: `${COLORS.PRIMARY.BLACK}60` }}
-      />
-
-      {/* Floating Elements */}
-      <div className="absolute top-10 left-10 text-neutral-white opacity-20 text-6xl">
-        🎬
-      </div>
-      <div className="absolute top-20 right-20 text-neutral-white opacity-20 text-4xl">
-        🍿
-      </div>
-      <div className="absolute bottom-20 left-20 text-neutral-white opacity-20 text-5xl">
-        ⭐
-      </div>
-      <div className="absolute bottom-10 right-10 text-neutral-white opacity-20 text-6xl">
-        🎟️
-      </div>
-
+      className="flex items-center justify-center p-4 relative overflow-hidden">
       {/* Ticket Card */}
       <motion.div
-        initial={{ opacity: 0, scale: 0.8, y: 50 }}
-        animate={{ opacity: 1, scale: 1, y: 0 }}
         transition={{ duration: 0.6, ease: "easeOut" }}
-        whileHover={{ scale: 1.02 }}
         className="relative z-10 w-full max-w-4xl"
       >
         {/* Ticket Card Container */}
-        <div className="bg-neutral-white rounded-2xl shadow-2xl overflow-hidden relative border-2 border-neutral-lightGray border-dashed">
+        <div className="rounded-2xl shadow-2xl overflow-hidden relative border-2 border-neutral-lightGray border-dashed"
+             style={{
+               background: `rgba(255, 255, 255, 0.1)`,
+               backdropFilter: 'blur(5px)',
+               WebkitBackdropFilter: 'blur(5px)'
+             }}>
           {/* Ticket Notch - Left */}
           <div className="absolute left-0 top-1/2 transform -translate-y-1/2 w-4 h-8 bg-primary-purple rounded-r-full -ml-2" />
 
@@ -88,23 +71,33 @@ const RegisterForm = ({ onRegister, onSwitchToLogin }) => {
           {/* Ticket Header */}
           <div
             className="p-6 text-center relative"
-            style={{ background: COLORS.GRADIENTS.PINK_ORANGE }}
+            style={{
+              background: `linear-gradient(135deg, rgba(45, 27, 105, 0.9) 0%, rgba(45, 27, 105, 0.4)`,
+              borderBottom: `2px solid ${COLORS.CINEMA.NEON_PINK}`,
+              backdropFilter: 'blur(10px)',
+              WebkitBackdropFilter: 'blur(10px)'
+            }}
           >
-            <div className="text-4xl mb-2">🎫</div>
-            <h1 className="text-neutral-white text-2xl font-bold">
+            <h1 className="text-white text-2xl font-bold drop-shadow-lg">
               🎬 Đăng ký tài khoản
             </h1>
-            <p className="text-neutral-white opacity-90 text-sm mt-2">
+            <p className="text-white italic opacity-95 text-sm mt-2 drop-shadow-md">
               Tham gia Cinema Booking System
             </p>
-            <div className="mt-3 text-neutral-white opacity-75 text-xs">
+            <div className="mt-1 text-white opacity-85 text-xs drop-shadow-md">
               <div>🎫 TICKET REGISTRATION</div>
-              <div>📅 Valid: Lifetime</div>
             </div>
           </div>
 
           {/* Ticket Body - Horizontal Layout */}
-          <div className="p-6">
+          <div
+            className="p-6"
+            style={{
+              background: `rgba(255, 255, 255, 0.15)`,
+              backdropFilter: 'blur(8px)',
+              WebkitBackdropFilter: 'blur(8px)'
+            }}
+          >
             <form onSubmit={handleSubmit}>
               {/* Two Column Layout */}
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6 relative">
@@ -115,7 +108,7 @@ const RegisterForm = ({ onRegister, onSwitchToLogin }) => {
                 <div className="space-y-4 pr-0 lg:pr-6">
                   {/* Full Name Input */}
                   <div>
-                    <label className="block text-neutral-darkGray text-sm font-semibold mb-2">
+                    <label className="block text-white text-sm font-semibold mb-2 drop-shadow-md">
                       👤 Họ và tên
                     </label>
                     <input
@@ -124,14 +117,14 @@ const RegisterForm = ({ onRegister, onSwitchToLogin }) => {
                       value={formData.fullName}
                       onChange={handleInputChange}
                       required
-                      className="w-full px-4 py-3 border-2 border-neutral-lightGray rounded-xl focus:border-primary-pink focus:outline-none transition-colors"
+                      className="w-full px-4 py-3 border-2 border-white/40 rounded-xl focus:border-primary-pink focus:outline-none transition-colors bg-white/80 backdrop-blur-sm text-gray-800 font-medium placeholder-cinema-neonPink"
                       placeholder="Nhập họ và tên"
                     />
                   </div>
 
                   {/* Email Input */}
                   <div>
-                    <label className="block text-neutral-darkGray text-sm font-semibold mb-2">
+                    <label className="block text-white text-sm font-semibold mb-2 drop-shadow-md">
                       📧 Email
                     </label>
                     <input
@@ -140,7 +133,7 @@ const RegisterForm = ({ onRegister, onSwitchToLogin }) => {
                       value={formData.email}
                       onChange={handleInputChange}
                       required
-                      className="w-full px-4 py-3 border-2 border-neutral-lightGray rounded-xl focus:border-primary-pink focus:outline-none transition-colors"
+                      className="w-full px-4 py-3 border-2 border-white/40 rounded-xl focus:border-primary-pink focus:outline-none transition-colors bg-white/80 backdrop-blur-sm text-gray-800 font-medium placeholder-cinema-neonPink"
                       placeholder="Nhập email của bạn"
                     />
                   </div>
@@ -150,34 +143,52 @@ const RegisterForm = ({ onRegister, onSwitchToLogin }) => {
                 <div className="space-y-4 pl-0 lg:pl-6">
                   {/* Password Input */}
                   <div>
-                    <label className="block text-neutral-darkGray text-sm font-semibold mb-2">
+                    <label className="block text-white text-sm font-semibold mb-2 drop-shadow-md">
                       🔒 Mật khẩu
                     </label>
-                    <input
-                      type="password"
-                      name="password"
-                      value={formData.password}
-                      onChange={handleInputChange}
-                      required
-                      className="w-full px-4 py-3 border-2 border-neutral-lightGray rounded-xl focus:border-primary-pink focus:outline-none transition-colors"
-                      placeholder="Nhập mật khẩu"
-                    />
+                    <div className="relative">
+                      <input
+                        type={showPassword ? "text" : "password"}
+                        name="password"
+                        value={formData.password}
+                        onChange={handleInputChange}
+                        required
+                        className="w-full px-4 py-3 pr-12 border-2 border-white/40 rounded-xl focus:border-primary-pink focus:outline-none transition-colors bg-white/30 backdrop-blur-sm text-white font-medium placeholder-white/60"
+                        placeholder="Nhập mật khẩu"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setShowPassword(!showPassword)}
+                        className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-600 hover:text-primary-pink transition-colors"
+                      >
+                        {showPassword ? '🙈' : '👁️'}
+                      </button>
+                    </div>
                   </div>
 
                   {/* Confirm Password Input */}
                   <div>
-                    <label className="block text-neutral-darkGray text-sm font-semibold mb-2">
+                    <label className="block text-white text-sm font-semibold mb-2 drop-shadow-md">
                       🔒 Xác nhận mật khẩu
                     </label>
-                    <input
-                      type="password"
-                      name="confirmPassword"
-                      value={formData.confirmPassword}
-                      onChange={handleInputChange}
-                      required
-                      className="w-full px-4 py-3 border-2 border-neutral-lightGray rounded-xl focus:border-primary-pink focus:outline-none transition-colors"
-                      placeholder="Nhập lại mật khẩu"
-                    />
+                    <div className="relative">
+                      <input
+                        type={showConfirmPassword ? "text" : "password"}
+                        name="confirmPassword"
+                        value={formData.confirmPassword}
+                        onChange={handleInputChange}
+                        required
+                        className="w-full px-4 py-3 pr-12 border-2 border-white/40 rounded-xl focus:border-primary-pink focus:outline-none transition-colors bg-white/30 backdrop-blur-sm text-white font-medium placeholder-white/60"
+                        placeholder="Nhập lại mật khẩu"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                        className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-600 hover:text-primary-pink transition-colors"
+                      >
+                        {showConfirmPassword ? '🙈' : '👁️'}
+                      </button>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -191,13 +202,33 @@ const RegisterForm = ({ onRegister, onSwitchToLogin }) => {
                   onChange={handleInputChange}
                   className="mr-2 mt-1 text-primary-pink focus:ring-primary-pink"
                 />
-                <span className="text-neutral-darkGray text-sm">
+                <span className="text-white text-sm drop-shadow-md">
                   Tôi đồng ý với{' '}
-                  <button type="button" className="text-accent-orange hover:text-accent-yellow">
+                  <button
+                    type="button"
+                    className="transition-colors italic"
+                    style={{ color: COLORS.ACCENT.ORANGE }}
+                    onMouseEnter={(e) => {
+                      e.target.style.color = COLORS.ACCENT.YELLOW;
+                    }}
+                    onMouseLeave={(e) => {
+                      e.target.style.color = COLORS.ACCENT.ORANGE;
+                    }}
+                  >
                     điều khoản sử dụng
                   </button>
                   {' '}và{' '}
-                  <button type="button" className="text-accent-orange hover:text-accent-yellow">
+                  <button
+                    type="button"
+                    className="transition-colors italic"
+                    style={{ color: COLORS.ACCENT.ORANGE }}
+                    onMouseEnter={(e) => {
+                      e.target.style.color = COLORS.ACCENT.YELLOW;
+                    }}
+                    onMouseLeave={(e) => {
+                      e.target.style.color = COLORS.ACCENT.ORANGE;
+                    }}
+                  >
                     chính sách bảo mật
                   </button>
                 </span>
@@ -207,25 +238,24 @@ const RegisterForm = ({ onRegister, onSwitchToLogin }) => {
               <motion.button
                 type="submit"
                 disabled={isLoading}
-                whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
-                className="w-full py-3 rounded-xl font-bold text-neutral-white transition-all duration-300 relative overflow-hidden mb-6"
+                className="w-full py-3 rounded-xl font-bold text-white transition-all duration-300 relative overflow-hidden mb-2"
                 style={{
-                  backgroundColor: COLORS.ACCENT.ORANGE,
-                  background: isLoading
-                    ? `linear-gradient(135deg, ${COLORS.ACCENT.ORANGE} 0%, ${COLORS.ACCENT.YELLOW} 100%)`
-                    : COLORS.ACCENT.ORANGE
+                  backgroundColor: COLORS.PRIMARY.PINK,
+                  boxShadow: `0 4px 15px ${COLORS.PRIMARY.PINK}30`
                 }}
                 onMouseEnter={(e) => {
-                  e.target.style.background = `linear-gradient(135deg, ${COLORS.ACCENT.ORANGE} 0%, ${COLORS.PRIMARY.PINK} 100%)`;
+                  e.target.style.backgroundColor = COLORS.CINEMA.NEON_PINK;
+                  e.target.style.boxShadow = `0 6px 20px ${COLORS.CINEMA.NEON_PINK}40`;
                 }}
                 onMouseLeave={(e) => {
-                  e.target.style.background = COLORS.ACCENT.ORANGE;
+                  e.target.style.backgroundColor = COLORS.PRIMARY.PINK;
+                  e.target.style.boxShadow = `0 4px 15px ${COLORS.PRIMARY.PINK}30`;
                 }}
               >
                 {isLoading ? (
                   <div className="flex items-center justify-center">
-                    <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-neutral-white mr-2"></div>
+                    <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
                     Đang đăng ký...
                   </div>
                 ) : (
@@ -234,67 +264,32 @@ const RegisterForm = ({ onRegister, onSwitchToLogin }) => {
               </motion.button>
 
               {/* Divider */}
-              <div className="flex items-center my-6">
-                <div className="flex-1 border-t border-neutral-lightGray border-dashed"></div>
-                <span className="px-4 text-neutral-lightGray text-sm">hoặc</span>
-                <div className="flex-1 border-t border-neutral-lightGray border-dashed"></div>
+              <div className="flex items-center my-2">
+                <div className="flex-1 border-t border-white/30 border-dashed"></div>
+                <span className="px-4 text-white/80 text-sm drop-shadow-md">hoặc</span>
+                <div className="flex-1 border-t border-white/30 border-dashed"></div>
               </div>
 
               {/* Login Link */}
               <div className="text-center">
-                <span className="text-neutral-darkGray text-sm">Đã có tài khoản? </span>
+                <span className="text-white text-sm drop-shadow-md">Đã có tài khoản? </span>
                 <button
                   onClick={onSwitchToLogin}
-                  className="text-primary-pink font-semibold hover:text-cinema-neonPink transition-colors"
+                  className="font-semibold italic transition-colors"
+                  style={{
+                    color: COLORS.PRIMARY.PINK
+                  }}
+                  onMouseEnter={(e) => {
+                    e.target.style.color = COLORS.CINEMA.NEON_PINK;
+                  }}
+                  onMouseLeave={(e) => {
+                    e.target.style.color = COLORS.PRIMARY.PINK;
+                  }}
                 >
                   Đăng nhập ngay
                 </button>
               </div>
             </form>
-          </div>
-
-          {/* Ticket Right Side - QR Code & Icons */}
-          <div className="absolute right-4 top-1/2 transform -translate-y-1/2 hidden md:block">
-            <div className="text-center">
-              {/* Mock QR Code */}
-              <div className="w-16 h-16 bg-neutral-darkGray rounded-lg mb-2 flex items-center justify-center">
-                <div className="grid grid-cols-4 gap-1">
-                  {Array.from({ length: 16 }).map((_, i) => (
-                    <div
-                      key={i}
-                      className={`w-2 h-2 rounded-sm ${
-                        Math.random() > 0.5 ? 'bg-neutral-white' : 'bg-neutral-darkGray'
-                      }`}
-                    />
-                  ))}
-                </div>
-              </div>
-
-              {/* Movie Icons */}
-              <div className="flex flex-col items-center space-y-1">
-                <motion.div
-                  animate={{ rotate: [0, 5, -5, 0] }}
-                  transition={{ duration: 2, repeat: Infinity }}
-                  className="text-2xl"
-                >
-                  🎭
-                </motion.div>
-                <motion.div
-                  animate={{ scale: [1, 1.1, 1] }}
-                  transition={{ duration: 1.5, repeat: Infinity }}
-                  className="text-xl"
-                >
-                  🎪
-                </motion.div>
-                <motion.div
-                  animate={{ rotate: [0, 10, -10, 0] }}
-                  transition={{ duration: 3, repeat: Infinity }}
-                  className="text-lg"
-                >
-                  🎨
-                </motion.div>
-              </div>
-            </div>
           </div>
         </div>
       </motion.div>

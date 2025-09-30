@@ -5,6 +5,7 @@ import { useAuth } from '../../contexts/AuthContext';
 import LoginForm from './components/LoginForm';
 import RegisterForm from './components/RegisterForm';
 import PopcornAnimation from '../../components/animations/EnhancedPopcornAnimation';
+import {COLORS} from "../../shared/constants/colors";
 
 const AuthPage = () => {
   const [currentView, setCurrentView] = useState('login'); // 'login', 'register'
@@ -38,7 +39,25 @@ const AuthPage = () => {
   };
 
   return (
-    <div className="relative">
+    <div className="relative h-screen">
+      {/* Background Overlay */}
+      <div
+        className="absolute inset-0"
+        style={{ backgroundColor: `${COLORS.PRIMARY.BLACK}60` }}
+      />
+      {/* Floating Elements */}
+      <div className="absolute top-10 left-10 text-neutral-white opacity-20 text-6xl">
+        🎬
+      </div>
+      <div className="absolute top-20 right-20 text-neutral-white opacity-20 text-4xl">
+        🍿
+      </div>
+      <div className="absolute bottom-20 left-20 text-neutral-white opacity-20 text-5xl">
+        ⭐
+      </div>
+      <div className="absolute bottom-10 right-10 text-neutral-white opacity-20 text-6xl">
+        🎟️
+      </div>
       {/* Popcorn Falling Animation */}
       <PopcornAnimation />
 

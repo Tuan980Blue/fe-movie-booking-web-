@@ -66,7 +66,7 @@ const Showtimes = ({ movieId }) => {
       >
         <div className="flex items-center mb-6">
           <div className="mr-4 h-px bg-primary-pink flex-1"></div>
-          <h3 className="font-bold text-lg">📅 LỊCH CHIẾU</h3>
+          <h3 className="font-bold text-lg italic">📅 LỊCH CHIẾU</h3>
           <div className="ml-4 h-px bg-primary-pink flex-1"></div>
         </div>
 
@@ -84,20 +84,20 @@ const Showtimes = ({ movieId }) => {
         {!loading && !error && groups.map(group => (
           <div key={group.dateKey} className="mb-8">
             <div className="relative inline-block mb-4">
-              <div className="bg-primary-purple text-white px-5 py-2 rounded-xl font-semibold shadow-lg border border-white select-none">
+              <div className="bg-primary-purple text-white italic px-5 py-2 rounded-xl font-semibold shadow-lg border border-white select-none">
                 {group.label}, ngày {group.dateShort}
               </div>
               <span className="absolute -bottom-2 left-6 w-3 h-3 bg-primary-purple rotate-45 rounded-[2px]"></span>
             </div>
 
-            <div className="grid grid-cols-3 sm:grid-cols-5 md:grid-cols-7 lg:grid-cols-8 gap-3">
+            <div className="grid grid-cols-3 sm:grid-cols-5 md:grid-cols-6 lg:grid-cols-7 gap-2 sm:gap-5">
               {group.items.map(item => (
                 <button
                   key={`filled-${item.id}`}
                   onClick={() => {
                     navigate('/booking/seat-selection', { state: { showtime: item } });
                   }}
-                  className="px-5 py-2 rounded-lg text-sm font-semibold transition-all bg-primary-pink text-white border border-primary-pink hover:brightness-110 focus:outline-none focus:ring-2 focus:ring-primary-pink/40"
+                  className="px-5 py-2 rounded-lg text-sm font-semibold transition-all bg-white text-primary-pink hover:bg-cinema-neonPink hover:text-white border border-primary-pink hover:brightness-110 focus:outline-none focus:ring-2 focus:ring-primary-pink/40"
                 >
                   {formatTime(item.startUtc)}
                 </button>
