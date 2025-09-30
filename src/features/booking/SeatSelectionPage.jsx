@@ -74,7 +74,10 @@ const SeatSelectionPage = () => {
   };
 
   const violatesSingleGapRule = (rowLabel, nextSelectedIds) => {
-    const seats = getRowSeats(rowLabel).filter(isSeatActive);
+    // Only apply gap rule to non-couple seats
+    const seats = getRowSeats(rowLabel)
+      .filter(isSeatActive)
+      .filter((s) => String(s.seatType).toLowerCase() !== 'couple');
     if (seats.length === 0) return false;
     const selectedNums = seats.filter(s => nextSelectedIds.includes(s.id)).map(s => s.seatNumber).sort((a,b)=>a-b);
     if (selectedNums.length === 0) return false;
@@ -106,17 +109,21 @@ const SeatSelectionPage = () => {
     setSelectedSeatIds((cur) => {
       let next = cur.includes(seat.id) ? cur.filter((x) => x !== seat.id) : [...cur, seat.id];
 
-      // Couple rule: auto pair with adjacent couple seat in the row (seatNumber +/- 1)
+      // Couple rule: only auto-pair if the pair is physically adjacent (<= 50px apart)
       if (String(seat.seatType).toLowerCase() === 'couple') {
-        const rowSeats = getRowSeats(seat.rowLabel).filter(s => String(s.seatType).toLowerCase() === 'couple');
-        const pair = rowSeats.find(s => Math.abs(s.seatNumber - seat.seatNumber) === 1);
+        const unit = 50;
+        const rowSeats = getRowSeats(seat.rowLabel).filter(
+          (s) => String(s.seatType).toLowerCase() === 'couple'
+        );
+        const pair = rowSeats.find(
+          (s) =>
+            Math.abs(s.seatNumber - seat.seatNumber) === 1 &&
+            Math.abs((s.positionX ?? 0) - (seat.positionX ?? 0)) <= unit
+        );
         if (pair && isSeatActive(pair)) {
           const bothSelected = next.includes(seat.id) && next.includes(pair.id);
           if (!bothSelected) {
-            // ensure both are selected together
             next = Array.from(new Set([...next, seat.id, pair.id]));
-          } else if (!cur.includes(seat.id)) {
-            // selecting both already handled; do nothing
           }
         }
       }
@@ -220,32 +227,56 @@ const SeatSelectionPage = () => {
 
                       {/* Seat grid */}
                       <div className="space-y-3 overflow-x-auto p-2">
-                        {layout.rows.map(row => (
-                          <div key={row.rowLabel} className="flex items-center gap-2">
-                            <div className="w-6 text-xs text-neutral-darkGray text-right">{row.rowLabel}</div>
-                            <div className="flex flex-nowrap gap-2">
-                              {row.seats.map(seat => {
-                                const selected = isSelected(seat.id);
-                                const baseColor = getSeatColorByType(seat.seatType);
-                                const bg = selected ? '#FACC15' : baseColor;
-                                const text = selected ? '#1F2937' : '#fff';
-                                return (
-                                  <button
-                                    key={seat.id}
-                                    type="button"
-                                    onClick={() => toggleSeat(seat)}
-                                    className="w-8 h-8 rounded-md border flex items-center justify-center text-xs focus:outline-none focus:ring-2 focus:ring-primary-pink/40"
-                                    title={`${seat.rowLabel}${seat.seatNumber} • ${seat.seatType}`}
-                                    aria-label={`${seat.rowLabel}${String(seat.seatNumber).padStart(2, '0')} ${seat.seatType}`}
-                                    style={{ backgroundColor: bg, color: text }}
-                                  >
-                                    {seat.seatNumber}
-                                  </button>
-                                );
-                              })}
+                        {layout.rows.map(row => {
+                          // Sort by positionX to respect layout coordinates
+                          const sorted = [...row.seats].sort((a, b) => (a.positionX ?? 0) - (b.positionX ?? 0));
+
+                          const unit = 50; // base grid step from data
+                          let cursorX = 0;
+
+                          return (
+                            <div key={row.rowLabel} className="flex items-center gap-2">
+                              <div className="w-6 text-xs text-neutral-darkGray text-right">{row.rowLabel}</div>
+                              <div className="flex flex-nowrap items-center" style={{ gap: 4 }}>
+                                {sorted.map((s, idx) => {
+                                  const parts = [];
+                                  const startX = s.positionX ?? 0;
+                                  if (startX > cursorX) {
+                                    const spacerWidth = Math.max(0, startX - cursorX);
+                                    parts.push(
+                                      <div key={`spacer-${row.rowLabel}-${cursorX}`} style={{ width: spacerWidth, height: 0 }} />
+                                    );
+                                    cursorX = startX;
+                                  }
+
+                                  const isCouple = String(s.seatType).toLowerCase() === 'couple';
+                                  const width = isCouple ? unit * 2 : unit;
+                                  const selected = isSelected(s.id);
+                                  const baseColor = getSeatColorByType(s.seatType);
+                                  const bg = selected ? '#FACC15' : baseColor;
+                                  const text = selected ? '#1F2937' : '#fff';
+
+                                  parts.push(
+                                    <button
+                                      key={s.id}
+                                      type="button"
+                                      onClick={() => toggleSeat(s)}
+                                      className="h-8 rounded-md border flex items-center justify-center text-xs focus:outline-none focus:ring-2 focus:ring-primary-pink/40"
+                                      title={`${s.rowLabel}${s.seatNumber} • ${s.seatType}`}
+                                      aria-label={`${s.rowLabel}${String(s.seatNumber).padStart(2, '0')} ${s.seatType}`}
+                                      style={{ backgroundColor: bg, color: text, width }}
+                                    >
+                                      {s.seatNumber}
+                                    </button>
+                                  );
+                                  cursorX += width;
+
+                                  return parts;
+                                })}
+                              </div>
                             </div>
-                          </div>
-                        ))}
+                          );
+                        })}
                       </div>
                     </div>
                   </div>
