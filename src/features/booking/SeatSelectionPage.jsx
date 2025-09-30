@@ -136,22 +136,51 @@ const SeatSelectionPage = () => {
   }
 
   return (
-    <div className="min-h-screen py-6 px-4 lg:px-8">
-      <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <div className="py-6 px-4 lg:px-8 h-full bg-neutral-white">
+      <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-1 lg:gap-6">
         {/* Left: Seat map */}
-        <div className="lg:col-span-2 bg-neutral-white rounded-2xl p-6">
-          <div className="flex items-center justify-between mb-4">
-            <div className="text-neutral-darkGray">
-              Phim: <strong>{showtime.movieTitle}</strong> • {showtime.format}
-              {showtime.subtitle ? ' • Phụ đề' : ''}
-              <div className="text-sm">
-                Thời gian: {new Date(showtime.startUtc).toLocaleString('vi-VN')} → {new Date(showtime.endUtc).toLocaleTimeString('vi-VN', {hour:'2-digit', minute:'2-digit'})}
+        <div className="lg:col-span-2 p-6">
+          {/* infor movie & showtime ,... */}
+          <div className="mb-5 px-4">
+            <div className="flex items-start justify-between gap-4">
+              <div className="flex items-start gap-4 min-w-0">
+                <div className="hidden sm:block w-14 h-20 rounded-lg overflow-hidden bg-neutral-lightGray/60 ring-1 ring-neutral-lightGray/60 shrink-0">
+                  <div className="w-full h-full flex items-center justify-center text-neutral-darkGray font-semibold">
+                    {showtime?.movieTitle?.[0] || 'M'}
+                  </div>
+                </div>
+                <div className="min-w-0">
+                  <div className="text-lg lg:text-xl font-bold text-neutral-darkGray truncate">{showtime.movieTitle}</div>
+                  <div className="mt-1 flex flex-wrap items-center gap-2 text-xs">
+                    {showtime?.format && (
+                      <span className="px-2 py-0.5 rounded-full bg-primary-pink/10 text-primary-pink ring-1 ring-primary-pink/20">
+                        {showtime.format}
+                      </span>
+                    )}
+                    {showtime?.subtitle && (
+                      <span className="px-2 py-0.5 rounded-full bg-gray-100 ring-1 ring-neutral-lightGray/70 text-neutral-darkGray">
+                        Phụ đề
+                      </span>
+                    )}
+                  </div>
+                  <div>
+                    <span className="font-light italic">Thời gian:</span> {new Date(showtime.startUtc).toLocaleDateString('vi-VN', {weekday:'short', day:'2-digit', month:'2-digit', year:'numeric'})} • {new Date(showtime.startUtc).toLocaleTimeString('vi-VN', {hour:'2-digit', minute:'2-digit'})} - {new Date(showtime.endUtc).toLocaleTimeString('vi-VN', {hour:'2-digit', minute:'2-digit'})}
+                  </div>
+                </div>
               </div>
-              {(showtime?.roomName || showtime?.auditoriumName || showtime?.cinemaName) && (
-                <div className="text-sm">{showtime.roomName || showtime.auditoriumName} • {showtime.cinemaName}</div>
-              )}
+              <div className="shrink-0 flex flex-col items-end">
+                <div className={"flex flex-col justify-center items-center"}>
+                  <div className="text-xs text-neutral-darkGray mb-1">Giữ chỗ còn</div>
+                  <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-primary-pink/10 ring-1 ring-primary-pink/20">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="text-primary-pink">
+                      <path d="M12 6v6l4 2" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                      <circle cx="12" cy="12" r="9" stroke="currentColor" strokeWidth="2"/>
+                    </svg>
+                    <span className="text-primary-pink font-semibold text-lg tabular-nums">{minutes}:{seconds}</span>
+                  </div>
+                </div>
+              </div>
             </div>
-            <div className="text-primary-pink font-bold text-xl">{minutes}:{seconds}</div>
           </div>
 
           {!loading && error && (
@@ -161,89 +190,196 @@ const SeatSelectionPage = () => {
             <div className="text-neutral-darkGray">Đang tải sơ đồ ghế...</div>
           )}
 
+          {/*Màn hình và các thông tin liên quan đến chỗ ngồi*/}
           {!loading && !error && layout && (
-            <div>
-              {/* Legend */}
-              <div className="flex flex-wrap gap-4 items-center text-sm mb-4 text-neutral-darkGray">
-                <div className="flex items-center gap-2"><span className="w-4 h-4 rounded bg-gray-400 inline-block"/>Ghế có thể đặt</div>
-                <div className="flex items-center gap-2"><span className="w-4 h-4 rounded bg-yellow-400 inline-block"/>Ghế đang chọn</div>
-                <div className="flex items-center gap-2"><span className="w-4 h-4 rounded bg-red-500 inline-block"/>Ghế đã có người đặt</div>
-                <div className="flex items-center gap-2"><span className="w-4 h-4 rounded bg-purple-600 inline-block"/>Ghế không thể đặt</div>
+            <div className="grid grid-cols-7 gap-2 lg:gap-6">
+              {/* Legend - left sidebar */}
+              <div className="col-span-2">
+                <div className="rounded-xl border border-neutral-lightGray/60 p-4">
+                  <div className="text-sm font-semibold text-neutral-darkGray mb-3">Chú thích</div>
+                  <div className="space-y-3 text-sm text-neutral-darkGray">
+                    <div className="flex items-center gap-3"><span className="w-5 h-5 rounded bg-gray-400 inline-block"/>Ghế có thể đặt</div>
+                    <div className="flex items-center gap-3"><span className="w-5 h-5 rounded bg-yellow-400 inline-block"/>Ghế đang chọn</div>
+                    <div className="flex items-center gap-3"><span className="w-5 h-5 rounded bg-green-500 inline-block"/>Ghế đang có người chọn</div>
+                    <div className="flex items-center gap-3"><span className="w-5 h-5 rounded bg-red-500 inline-block"/>Ghế đã có người đặt</div>
+                    <div className="flex items-center gap-3"><span className="w-5 h-5 rounded bg-purple-600 inline-block"/>Ghế không thể đặt</div>
+                  </div>
+                </div>
               </div>
 
-              {/* Screen */}
-              <div className="mb-6">
-                <div className="mx-auto mb-4 h-2 w-64 bg-neutral-lightGray rounded-full"/>
-                <div className="text-center text-xs text-neutral-darkGray">Màn hình</div>
-              </div>
+              {/* Screen + seat grid */}
+              <div className="col-span-5">
+                <div className="max-w-fit">
+                  <div className="w-full flex justify-center">
+                    <div className="mx-auto inline-block">
+                      {/* Screen */}
+                      <div className="mb-2">
+                        <div className="h-2 w-full ml-4 bg-neutral-lightGray rounded-full"/>
+                        <div className="mt-2 text-center italic text-sm font-medium text-neutral-darkGray">Màn hình</div>
+                      </div>
 
-              {/* Seat grid */}
-              <div className="space-y-3 overflow-x-auto">
-                {layout.rows.map(row => (
-                  <div key={row.rowLabel} className="flex items-center gap-2">
-                    <div className="w-6 text-xs text-neutral-darkGray text-right">{row.rowLabel}</div>
-                    <div className="flex flex-wrap gap-2">
-                      {row.seats.map(seat => {
-                        const selected = isSelected(seat.id);
-                        const baseColor = getSeatColorByType(seat.seatType);
-                        const bg = selected ? '#FACC15' : baseColor;
-                        const text = selected ? '#1F2937' : '#fff';
-                        return (
-                          <button
-                            key={seat.id}
-                            type="button"
-                            onClick={() => toggleSeat(seat)}
-                            className="w-8 h-8 rounded-md border flex items-center justify-center text-xs focus:outline-none focus:ring-2 focus:ring-primary-pink/40"
-                            title={`${seat.rowLabel}${seat.seatNumber} • ${seat.seatType}`}
-                            style={{ backgroundColor: bg, color: text }}
-                          >
-                            {seat.seatNumber}
-                          </button>
-                        );
-                      })}
+                      {/* Seat grid */}
+                      <div className="space-y-3 overflow-x-auto p-2">
+                        {layout.rows.map(row => (
+                          <div key={row.rowLabel} className="flex items-center gap-2">
+                            <div className="w-6 text-xs text-neutral-darkGray text-right">{row.rowLabel}</div>
+                            <div className="flex flex-nowrap gap-2">
+                              {row.seats.map(seat => {
+                                const selected = isSelected(seat.id);
+                                const baseColor = getSeatColorByType(seat.seatType);
+                                const bg = selected ? '#FACC15' : baseColor;
+                                const text = selected ? '#1F2937' : '#fff';
+                                return (
+                                  <button
+                                    key={seat.id}
+                                    type="button"
+                                    onClick={() => toggleSeat(seat)}
+                                    className="w-8 h-8 rounded-md border flex items-center justify-center text-xs focus:outline-none focus:ring-2 focus:ring-primary-pink/40"
+                                    title={`${seat.rowLabel}${seat.seatNumber} • ${seat.seatType}`}
+                                    aria-label={`${seat.rowLabel}${String(seat.seatNumber).padStart(2, '0')} ${seat.seatType}`}
+                                    style={{ backgroundColor: bg, color: text }}
+                                  >
+                                    {seat.seatNumber}
+                                  </button>
+                                );
+                              })}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
                     </div>
                   </div>
-                ))}
+                </div>
               </div>
             </div>
           )}
         </div>
 
         {/* Right: Booking summary */}
-        <div className="bg-neutral-white rounded-2xl p-6 lg:sticky lg:top-4 h-fit">
-          <div className="text-xl font-bold text-primary-pink mb-4">Thông tin đặt vé</div>
-          {isAuthenticated && (
-            <div className="space-y-2 text-neutral-darkGray mb-6">
-              <div><span className="font-semibold">Họ tên:</span> {user?.name || '-'}</div>
-              <div><span className="font-semibold">Email:</span> {user?.email || '-'}</div>
-            </div>
-          )}
-
-          <div className="space-y-2 text-neutral-darkGray mb-6">
-            <div className="flex items-start gap-2">
-              <span className="font-semibold">Ghế:</span>
-              <div className="flex-1">
-                {selectedSeatIds.length === 0 ? '0' : (
-                  <div className="flex flex-wrap gap-2">
-                    {selectedSeatIds.map(id => {
-                      const seat = layout?.rows.flatMap(r => r.seats).find(s => s.id === id);
-                      return <span key={id} className="px-2 py-1 rounded bg-neutral-lightGray text-xs text-neutral-darkGray">{seat ? getSeatName(seat) : id}</span>;
-                    })}
-                  </div>
-                )}
+        <div className="lg:sticky lg:top-4 h-fit">
+          <div className="rounded-2xl bg-white/90 backdrop-blur shadow-xl ring-1 ring-neutral-lightGray/60 overflow-hidden">
+            {/* Header */}
+            <div className="bg-gradient-to-r from-primary-pink to-rose-400 px-6 py-4">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2 text-white">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M4 7a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H9l-5 3V7z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                  <span className="text-base font-semibold">Thông tin đặt vé</span>
+                </div>
+                <span className="text-white/90 text-xl">🎟️</span>
               </div>
             </div>
-            <div><span className="font-semibold">Giá vé:</span> {formatVnd(basePrice)}</div>
-            <div className="text-lg font-bold">Tổng: {formatVnd(totalPrice)}</div>
-          </div>
 
-          <button
-            type="button"
-            disabled={selectedSeatIds.length === 0}
-            className={`w-full py-3 rounded-lg text-white font-semibold ${selectedSeatIds.length === 0 ? 'bg-gray-300 cursor-not-allowed' : 'bg-primary-pink hover:brightness-110'}`}
-          >
-            ĐẶT VÉ
-          </button>
+            {/* Body */}
+            <div className="px-6 py-2">
+              {isAuthenticated && (
+                <div className="mb-4 rounded-xl bg-neutral-lightGray/30 ring-1 ring-neutral-lightGray/60 px-4 py-3">
+                  <div className="flex items-center justify-between">
+                    <div className="text-sm text-neutral-darkGray">
+                      <div className="font-medium">{user?.name || '-'} - {user?.phone || '-'}</div>
+                      <div className="text-neutral-darkGray/80 italic">{user?.email || '-'}</div>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              <div className="space-y-4 text-neutral-darkGray">
+                <div>
+                  <div className="text-xs uppercase tracking-wide text-neutral-darkGray/70">Phim</div>
+                  <div className="mt-1 text-lg lg:text-xl font-bold truncate">{showtime.movieTitle}</div>
+                </div>
+
+                <div className="grid grid-cols-1 gap-3 text-sm">
+                  <div className="flex items-center gap-2">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="text-primary-pink">
+                      <path d="M7 10h10M7 14h7" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+                      <rect x="3" y="4" width="18" height="16" rx="2" stroke="currentColor" strokeWidth="1.5"/>
+                    </svg>
+                    <div>
+                      {new Date(showtime.startUtc).toLocaleDateString('vi-VN', {weekday:'short', day:'2-digit', month:'2-digit', year:'numeric'})}
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="text-primary-pink">
+                      <path d="M12 6v6l4 2" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                      <circle cx="12" cy="12" r="9" stroke="currentColor" strokeWidth="1.5"/>
+                    </svg>
+                    <div>
+                      {new Date(showtime.startUtc).toLocaleTimeString('vi-VN', {hour:'2-digit', minute:'2-digit'})} - {new Date(showtime.endUtc).toLocaleTimeString('vi-VN', {hour:'2-digit', minute:'2-digit'})}
+                    </div>
+                  </div>
+                  {(showtime?.roomName || showtime?.auditoriumName || showtime?.cinemaName) && (
+                    <div className="flex items-center gap-2">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="text-primary-pink">
+                        <path d="M12 21s7-4.5 7-10a7 7 0 1 0-14 0c0 5.5 7 10 7 10z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                        <circle cx="12" cy="11" r="2.5" stroke="currentColor" strokeWidth="1.5"/>
+                      </svg>
+                      <div>{showtime.roomName || showtime.auditoriumName} • {showtime.cinemaName}</div>
+                    </div>
+                  )}
+                </div>
+
+                <div className="h-px bg-neutral-lightGray/60"/>
+
+                <div className="text-sm">
+                  <div className="mb-2 font-medium">Ghế đã chọn</div>
+                  {selectedSeatIds.length === 0 ? (
+                    <div className="text-neutral-darkGray/70">Chưa chọn ghế</div>
+                  ) : (
+                    <div className="flex flex-wrap gap-2">
+                      {selectedSeatIds.map(id => {
+                        const seat = layout?.rows.flatMap(r => r.seats).find(s => s.id === id);
+                        return (
+                          <span
+                            key={id}
+                            className="inline-flex items-center gap-1 px-2 py-1 rounded-md bg-primary-pink/10 text-primary-pink ring-1 ring-primary-pink/20 text-xs"
+                          >
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                              <path d="M6 11V8a3 3 0 0 1 3-3h6a3 3 0 0 1 3 3v3" stroke="currentColor" strokeWidth="1.5"/>
+                              <path d="M5 11h16v6a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-6z" stroke="currentColor" strokeWidth="1.5"/>
+                            </svg>
+                            {seat ? getSeatName(seat) : id}
+                          </span>
+                        );
+                      })}
+                    </div>
+                  )}
+                </div>
+
+                <div className="h-px bg-neutral-lightGray/60"/>
+
+                <div className="space-y-2 text-sm">
+                  <div className="flex items-center justify-between">
+                    <span className="text-neutral-darkGray/80">Giá vé</span>
+                    <span className="font-medium">{formatVnd(basePrice)}</span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-neutral-darkGray/80">Số lượng</span>
+                    <span className="font-medium">{selectedSeatIds.length}</span>
+                  </div>
+                  <div className="flex items-center justify-between text-lg font-bold">
+                    <span>Tổng</span>
+                    <span className="text-primary-pink">{formatVnd(totalPrice)}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Footer / CTA */}
+            <div className="px-6 pb-6">
+              <button
+                type="button"
+                disabled={selectedSeatIds.length === 0}
+                className={`w-full inline-flex items-center justify-center gap-2 py-3 rounded-xl text-white font-semibold transition-all duration-150 shadow-sm ${selectedSeatIds.length === 0 ? 'bg-gray-300 cursor-not-allowed' : 'bg-gradient-to-r from-primary-pink to-rose-400 hover:shadow-md hover:brightness-[1.03]'}`}
+              >
+                <span>ĐẶT VÉ</span>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="opacity-90">
+                  <path d="M5 12h14M13 5l7 7-7 7" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+              </button>
+            </div>
+          </div>
         </div>
       </div>
     </div>
