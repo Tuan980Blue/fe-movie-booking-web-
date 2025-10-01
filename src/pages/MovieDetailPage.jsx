@@ -5,6 +5,7 @@ import {getMovieDetailApi} from '../services/movieService';
 import {COLORS} from '../shared/constants/colors';
 import Showtimes from "../components/moviedetail/Showtimes";
 import BookingForm from "../components/forms/BookingForm";
+import MovieDetailSkeleton from "../components/ui/MovieDetailSkeleton";
 
 const MovieDetailPage = () => {
   const {id} = useParams();
@@ -57,15 +58,7 @@ const MovieDetailPage = () => {
   };
 
   if (loading) {
-    return (
-      <div
-        className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary-purple to-primary-pink">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-white mx-auto mb-4"></div>
-          <p className="text-white text-lg">Đang tải thông tin phim...</p>
-        </div>
-      </div>
-    );
+    return <MovieDetailSkeleton />;
   }
 
   if (error || !movie) {

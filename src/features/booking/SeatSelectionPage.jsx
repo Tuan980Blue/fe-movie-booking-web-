@@ -2,6 +2,7 @@ import React, {useEffect, useMemo, useState} from 'react';
 import {useLocation, useNavigate} from 'react-router-dom';
 import {getSeatLayoutApi} from '../../services/roomService';
 import { useAuth } from '../../contexts/AuthContext';
+import SeatSelectionSkeleton from '../../components/ui/SeatSelectionSkeleton';
 
 const SeatSelectionPage = () => {
   const location = useLocation();
@@ -193,9 +194,7 @@ const SeatSelectionPage = () => {
           {!loading && error && (
             <div className="text-accent-red mb-4">{error}</div>
           )}
-          {loading && (
-            <div className="text-neutral-darkGray">Đang tải sơ đồ ghế...</div>
-          )}
+          {loading && <SeatSelectionSkeleton />}
 
           {/*Màn hình và các thông tin liên quan đến chỗ ngồi*/}
           {!loading && !error && layout && (
