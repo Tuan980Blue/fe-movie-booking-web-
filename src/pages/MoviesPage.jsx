@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { getMoviesApi } from '../services/movieService';
+import MoviePageSkeleton from '@/components/ui/MoviePageSkeleton';
 
 const MoviesPage = () => {
   const [movies, setMovies] = useState([]);
@@ -150,9 +151,7 @@ const MoviesPage = () => {
           </div>
 
           {/* Loading / Error */}
-          {isLoading && (
-            <div className="py-16 text-center text-neutral-darkGray">Đang tải danh sách phim...</div>
-          )}
+          {isLoading && <MoviePageSkeleton count={pageSize} />}
           {!!error && !isLoading && (
             <div className="py-8 text-center text-red-600">{error}</div>
           )}
@@ -186,7 +185,7 @@ const MoviesPage = () => {
                       <div className="absolute inset-0 p-4 flex flex-col items-center justify-center text-white">
                         <div className="w-full max-w-[210px] space-y-3">
                           <div className="w-full max-w-[200px] space-y-2.5">
-                            <Link to={`/movies/${m.id}`} className="block w-full text-center text-sm font-extrabold tracking-wide bg-gray-50 hover:bg-gray-300 text-pink-500 rounded-md py-2">> CHI TIẾT</Link>
+                            <Link to={`/movies/${m.id}`} className="block w-full text-center text-sm font-extrabold tracking-wide bg-gray-50 hover:bg-gray-300 text-pink-500 rounded-md py-2">CHI TIẾT</Link>
                             <Link to={`/movies/${m.id}`} className="block w-full text-center text-sm font-extrabold tracking-wide bg-pink-500 text-white hover:bg-cinema-neonPink rounded-md py-2">MUA VÉ</Link>
                           </div>
                           <div className="mt-3 text-left space-y-1 text-[13px] md:text-sm">
