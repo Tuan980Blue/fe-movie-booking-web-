@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { getMoviesApi } from '../services/movieService';
-import MoviePageSkeleton from '@/components/ui/MoviePageSkeleton';
+import MoviePageSkeleton from '../components/ui/MoviePageSkeleton';
 
 const MoviesPage = () => {
   const [movies, setMovies] = useState([]);
