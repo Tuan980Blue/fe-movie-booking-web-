@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { getMoviesApi } from '../../services/movieService';
 import { IoTicket } from 'react-icons/io5';
 import { FaGooglePlay } from 'react-icons/fa';
+import MoviesShowcaseSkeleton from '../ui/MoviesShowcaseSkeleton';
 
 const TabButton = ({ active, onClick, children, iconLeft, iconRight }) => (
   <button
@@ -71,9 +72,7 @@ const MoviesShowcase = () => {
           <Link to="/movies" className="hidden md:inline-block text-sm font-semibold text-white/90 hover:text-white">Xem tất cả →</Link>
         </div>
 
-        {loading && (
-          <div className="py-12 text-center text-neutral-white/80">Đang tải...</div>
-        )}
+        {loading && <MoviesShowcaseSkeleton />}
         {!!error && !loading && (
           <div className="py-8 text-center text-red-400">{error}</div>
         )}
@@ -113,7 +112,7 @@ const MoviesShowcase = () => {
                   <div className="absolute inset-0 bg-black/55 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                     <div className="absolute inset-0 p-3 flex flex-col items-center justify-center text-white">
                       <div className="w-full max-w-[200px] space-y-2.5">
-                        <Link to={`/movies/${m.id}`} className="block w-full text-center text-sm font-extrabold tracking-wide bg-gray-50 hover:bg-gray-300 text-pink-500 rounded-md py-2">> CHI TIẾT</Link>
+                        <Link to={`/movies/${m.id}`} className="block w-full text-center text-sm font-extrabold tracking-wide bg-gray-50 hover:bg-gray-300 text-pink-500 rounded-md py-2">&gt; CHI TIẾT</Link>
                         <Link to={`/movies/${m.id}`} className="block w-full text-center text-sm font-extrabold tracking-wide bg-pink-500 text-white hover:bg-cinema-neonPink rounded-md py-2">MUA VÉ</Link>
                       </div>
                     </div>
