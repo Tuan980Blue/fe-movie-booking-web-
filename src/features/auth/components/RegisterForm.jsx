@@ -117,7 +117,7 @@ const RegisterForm = ({ onRegister, onSwitchToLogin }) => {
                       value={formData.fullName}
                       onChange={handleInputChange}
                       required
-                      className="w-full px-4 py-3 border-2 border-white/40 rounded-xl focus:border-primary-pink focus:outline-none transition-colors bg-white/80 backdrop-blur-sm text-gray-800 font-medium placeholder-cinema-neonPink"
+                      className="w-full px-4 py-3 border-2 border-white/40 rounded-xl focus:border-primary-pink focus:outline-none transition-colors bg-white/80 backdrop-blur-sm text-gray-800 font-medium placeholder-zinc-600"
                       placeholder="Nhập họ và tên"
                     />
                   </div>
@@ -133,7 +133,7 @@ const RegisterForm = ({ onRegister, onSwitchToLogin }) => {
                       value={formData.email}
                       onChange={handleInputChange}
                       required
-                      className="w-full px-4 py-3 border-2 border-white/40 rounded-xl focus:border-primary-pink focus:outline-none transition-colors bg-white/80 backdrop-blur-sm text-gray-800 font-medium placeholder-cinema-neonPink"
+                      className="w-full px-4 py-3 border-2 border-white/40 rounded-xl focus:border-primary-pink focus:outline-none transition-colors bg-white/80 backdrop-blur-sm text-gray-800 font-medium placeholder-zinc-600"
                       placeholder="Nhập email của bạn"
                     />
                   </div>
