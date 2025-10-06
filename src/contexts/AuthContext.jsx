@@ -20,11 +20,11 @@ export const AuthProvider = ({ children }) => {
   const [isLoading, setIsLoading] = useState(true);
   const [isAdmin, setIsAdmin] = useState(false);
 
-  // Khi app tải: cố gắng khôi phục phiên từ localStorage (mock cho demo)
+  // Khi app tải: cố gắng khôi phục phiên từ sessionStorage (mock cho demo)
   useEffect(() => {
     const checkAuthStatus = () => {
       try {
-        const token = localStorage.getItem('access_token');
+        const token = sessionStorage.getItem('access_token');
         const userData = localStorage.getItem('user_data');
 
         if (token && userData) {
@@ -38,7 +38,8 @@ export const AuthProvider = ({ children }) => {
       } catch (error) {
         console.error('Error checking auth status:', error);
         // Clear invalid data
-        localStorage.removeItem('access_token');
+        //localStorage.clear();
+        sessionStorage.removeItem('access_token');
         localStorage.removeItem('user_data');
       } finally {
         setIsLoading(false);
@@ -85,9 +86,9 @@ export const AuthProvider = ({ children }) => {
         role: normalizedRole,
       };
 
-      // Lưu token và user vào localStorage để khôi phục phiên
-      localStorage.setItem('access_token', accessToken);
-      if (accessTokenExpiresAt) localStorage.setItem('access_token_expires_at', accessTokenExpiresAt);
+      // Lưu token và user vào sessionStorage để khôi phục phiên
+      sessionStorage.setItem('access_token', accessToken);
+      if (accessTokenExpiresAt) sessionStorage.setItem('access_token_expires_at', accessTokenExpiresAt);
       // Lưu refresh token: đặt cookie để interceptor có thể đọc, và lưu hạn vào localStorage
       if (refreshToken) {
         const seconds = refreshTokenExpiresAt
@@ -96,7 +97,7 @@ export const AuthProvider = ({ children }) => {
         const secureFlag = window.location.protocol === 'https:' ? '; Secure' : '';
         document.cookie = `refresh_token=${encodeURIComponent(refreshToken)}; Max-Age=${seconds}; Path=/; SameSite=Lax${secureFlag}`;
       }
-      if (refreshTokenExpiresAt) localStorage.setItem('refresh_token_expires_at', refreshTokenExpiresAt);
+      
       localStorage.setItem('user_data', JSON.stringify(finalUser));
 
       setUser(finalUser);
@@ -135,8 +136,8 @@ export const AuthProvider = ({ children }) => {
       };
 
       // Persist tokens
-      localStorage.setItem('access_token', accessToken);
-      if (accessTokenExpiresAt) localStorage.setItem('access_token_expires_at', accessTokenExpiresAt);
+      sessionStorage.setItem('access_token', accessToken);
+      if (accessTokenExpiresAt) sessionStorage.setItem('access_token_expires_at', accessTokenExpiresAt);
       if (refreshToken) {
         const seconds = refreshTokenExpiresAt
           ? Math.max(60, Math.ceil((new Date(refreshTokenExpiresAt) - new Date()) / 1000))
@@ -144,7 +145,7 @@ export const AuthProvider = ({ children }) => {
         const secureFlag = window.location.protocol === 'https:' ? '; Secure' : '';
         document.cookie = `refresh_token=${encodeURIComponent(refreshToken)}; Max-Age=${seconds}; Path=/; SameSite=Lax${secureFlag}`;
       }
-      if (refreshTokenExpiresAt) localStorage.setItem('refresh_token_expires_at', refreshTokenExpiresAt);
+      
       localStorage.setItem('user_data', JSON.stringify(tempUser));
 
       setUser(tempUser);
@@ -161,11 +162,11 @@ export const AuthProvider = ({ children }) => {
   };
 
   const logout = () => {
-    // Xoá dữ liệu phiên khỏi localStorage và reset state
-    localStorage.removeItem('access_token');
-    localStorage.removeItem('access_token_expires_at');
+    // Xoá dữ liệu phiên khỏi sessionStorage và reset state
+    sessionStorage.removeItem('access_token');
+    sessionStorage.removeItem('access_token_expires_at');
     localStorage.removeItem('user_data');
-    localStorage.removeItem('refresh_token_expires_at');
+    
     // Xoá cookie refresh token
     document.cookie = 'refresh_token=; Max-Age=-1; path=/';
     setUser(null);
