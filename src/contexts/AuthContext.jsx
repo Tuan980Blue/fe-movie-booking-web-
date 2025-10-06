@@ -20,27 +20,29 @@ export const AuthProvider = ({ children }) => {
   const [isLoading, setIsLoading] = useState(true);
   const [isAdmin, setIsAdmin] = useState(false);
 
-  // Khi app tải: cố gắng khôi phục phiên từ sessionStorage (mock cho demo)
+  // Khi app tải: cố gắng khôi phục phiên nếu có;
   useEffect(() => {
     const checkAuthStatus = () => {
       try {
-        const token = sessionStorage.getItem('access_token');
         const userData = localStorage.getItem('user_data');
 
-        if (token && userData) {
+        if (userData) {
           const parsedUser = JSON.parse(userData);
           setUser(parsedUser);
-          // Đặt cờ admin dựa trên role của user (lưu ý: client-side chỉ mang tính UX)
           setIsAdmin(parsedUser.role === 'admin');
           // Đồng bộ hồ sơ mới nhất từ server trong nền
           syncUserFromServer();
+        } else {
+          // Không có phiên: đảm bảo state trống
+          setUser(null);
+          setIsAdmin(false);
         }
       } catch (error) {
         console.error('Error checking auth status:', error);
-        // Clear invalid data
-        //localStorage.clear();
         sessionStorage.removeItem('access_token');
         localStorage.removeItem('user_data');
+        setUser(null);
+        setIsAdmin(false);
       } finally {
         setIsLoading(false);
       }
@@ -97,7 +99,7 @@ export const AuthProvider = ({ children }) => {
         const secureFlag = window.location.protocol === 'https:' ? '; Secure' : '';
         document.cookie = `refresh_token=${encodeURIComponent(refreshToken)}; Max-Age=${seconds}; Path=/; SameSite=Lax${secureFlag}`;
       }
-      
+
       localStorage.setItem('user_data', JSON.stringify(finalUser));
 
       setUser(finalUser);
@@ -145,7 +147,7 @@ export const AuthProvider = ({ children }) => {
         const secureFlag = window.location.protocol === 'https:' ? '; Secure' : '';
         document.cookie = `refresh_token=${encodeURIComponent(refreshToken)}; Max-Age=${seconds}; Path=/; SameSite=Lax${secureFlag}`;
       }
-      
+
       localStorage.setItem('user_data', JSON.stringify(tempUser));
 
       setUser(tempUser);
@@ -166,7 +168,7 @@ export const AuthProvider = ({ children }) => {
     sessionStorage.removeItem('access_token');
     sessionStorage.removeItem('access_token_expires_at');
     localStorage.removeItem('user_data');
-    
+
     // Xoá cookie refresh token
     document.cookie = 'refresh_token=; Max-Age=-1; path=/';
     setUser(null);
