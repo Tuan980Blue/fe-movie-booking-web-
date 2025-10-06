@@ -38,7 +38,7 @@ const httpClient = axios.create({
 
 httpClient.interceptors.request.use((config) => {
   // Attach auth token if available
-  const token = localStorage.getItem('access_token');
+  const token = sessionStorage.getItem('access_token');
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }
@@ -77,15 +77,15 @@ httpClient.interceptors.response.use(
 
         if (!newAccessToken) throw new Error('Refresh failed: no access token');
 
-        // Cập nhật localStorage
-        localStorage.setItem('access_token', newAccessToken);
-        if (accessTokenExpiresAt) localStorage.setItem('access_token_expires_at', accessTokenExpiresAt);
+        // Cập nhật sessionStorage
+        sessionStorage.setItem('access_token', newAccessToken);
+        if (accessTokenExpiresAt) sessionStorage.setItem('access_token_expires_at', accessTokenExpiresAt);
         if (newRefreshToken) {
           // Lưu refresh token vào cookie (ví dụ 14 ngày hoặc theo expiresAt)
           const days = refreshTokenExpiresAt ? Math.max(1, Math.ceil((new Date(refreshTokenExpiresAt) - new Date()) / (1000 * 60 * 60 * 24))) : 14;
           setCookie('refresh_token', newRefreshToken, { days, path: '/', sameSite: 'Lax' });
         }
-        if (refreshTokenExpiresAt) localStorage.setItem('refresh_token_expires_at', refreshTokenExpiresAt);
+        
 
         // Cập nhật user từ access token mới (nếu thay đổi claim)
         const parsedUser = parseUserFromAccessToken(newAccessToken);
@@ -106,10 +106,10 @@ httpClient.interceptors.response.use(
         return httpClient(originalRequest);
       } catch (refreshErr) {
         // Refresh thất bại: xoá phiên và trả lỗi
-        localStorage.removeItem('access_token');
-        localStorage.removeItem('access_token_expires_at');
+        sessionStorage.removeItem('access_token');
+        sessionStorage.removeItem('access_token_expires_at');
         eraseCookie('refresh_token');
-        localStorage.removeItem('refresh_token_expires_at');
+        
         localStorage.removeItem('user_data');
         return Promise.reject(refreshErr);
       }
